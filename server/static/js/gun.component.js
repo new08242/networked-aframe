@@ -1,44 +1,63 @@
+/*global AFRAME, THREE */
+
 AFRAME.registerComponent('gun', {
   schema: {
     bulletTemplate: {default: '#bullet-template'},
+    boxTemplate: {default: '#blue-box-template'},
     triggerKeyCode: {default: 32} // spacebar
   },
 
   init: function() {
-    var that = this;
+    let that = this; //TODO: Why need this assign to that
     document.body.onkeyup = function(e){
       if(e.keyCode == that.data.triggerKeyCode){
-        that.shoot();
+        that.createBullet();
       }
+    }
+    document.body.onclick = function(e){
+      that.spawnBox();
     }
   },
 
-  shoot: function() {
-    this.createBullet();
-  },
+  spawnBox: function() {
+    let scene = document.querySelector('a-scene');
 
-  createBullet: function() {
-    var el = document.createElement('a-entity');
-    el.setAttribute('networked', 'template:' + this.data.bulletTemplate);
+    let el = document.createElement('a-box');
+    el.setAttribute('networked');
     el.setAttribute('remove-in-seconds', 3);
-    el.setAttribute('forward', 'speed:0.3');
+    el.setAttribute('forward', 'speed:0.1');
 
-    var tip = document.querySelector('#player');
+    let tip = document.querySelector('#gun-tip');
     el.setAttribute('position', this.getInitialBulletPosition(tip));
     el.setAttribute('rotation', this.getInitialBulletRotation(tip));
 
-    var scene = document.querySelector('a-scene');
+    scene.appendChild(el);
+  },
+
+  createBullet: function() {
+    let that = this;
+    let scene = document.querySelector('a-scene');
+
+    let el = document.createElement('a-entity');
+    el.setAttribute('networked', 'template:' + that.data.bulletTemplate);
+    el.setAttribute('remove-in-seconds', 3);
+    el.setAttribute('forward', 'speed:0.1');
+
+    let tip = document.querySelector('#gun-tip');
+    el.setAttribute('position', this.getInitialBulletPosition(tip));
+    el.setAttribute('rotation', this.getInitialBulletRotation(tip));
+
     scene.appendChild(el);
   },
 
   getInitialBulletPosition: function(spawnerEl) {
-    var worldPos = new THREE.Vector3();
+    let worldPos = new THREE.Vector3();
     worldPos.setFromMatrixPosition(spawnerEl.object3D.matrixWorld);
     return worldPos;
   },
 
   getInitialBulletRotation: function(spawnerEl) {
-    var worldDirection = new THREE.Vector3();
+    let worldDirection = new THREE.Vector3();
 
     spawnerEl.object3D.getWorldDirection(worldDirection);
     worldDirection.multiplyScalar(-1);

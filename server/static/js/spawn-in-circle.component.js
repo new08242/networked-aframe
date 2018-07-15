@@ -1,3 +1,5 @@
+/*global AFRAME */
+
 AFRAME.registerComponent('spawn-in-circle', {
   schema: {
     radius: {type: 'number', default: 1}

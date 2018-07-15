@@ -1,27 +1,29 @@
+/*eslint no-console: ["error", { allow: ["log"] }] */
+
 // Load required modules
-var http    = require("http");              // http server core module
-var express = require("express");           // web framework external module
-var serveStatic = require('serve-static');  // serve static files
-var socketIo = require("socket.io");        // web socket external module
-var easyrtc = require("easyrtc");               // EasyRTC external module
+let http    = require("http");              // http server core module
+let express = require("express");           // web framework external module
+let serveStatic = require('serve-static');  // serve static files
+let socketIo = require("socket.io");        // web socket external module
+let easyrtc = require("easyrtc");               // EasyRTC external module
 
 // Set process name
 process.title = "node-easyrtc";
 
 // Get port or default to 8080
-var port = process.env.PORT || 8080;
+let port = process.env.PORT || 8080;
 
 // Setup and configure Express http server. Expect a subfolder called "static" to be the web root.
-var app = express();
+let app = express();
 app.use(serveStatic('server/static', {'index': ['index.html']}));
 
 // Start Express http server
-var webServer = http.createServer(app);
+let webServer = http.createServer(app);
 
 // Start Socket.io so it attaches itself to Express server
-var socketServer = socketIo.listen(webServer, {"log level":1});
+let socketServer = socketIo.listen(webServer, {"log level":1});
 
-var myIceServers = [
+let myIceServers = [
   {"url":"stun:stun.l.google.com:19302"},
   {"url":"stun:stun1.l.google.com:19302"},
   {"url":"stun:stun2.l.google.com:19302"},
@@ -64,7 +66,7 @@ easyrtc.events.on("roomJoin", function(connectionObj, roomName, roomParameter, c
 });
 
 // Start EasyRTC server
-var rtc = easyrtc.listen(app, socketServer, null, function(err, rtcRef) {
+let rtc = easyrtc.listen(app, socketServer, null, function(err, rtcRef) {
     console.log("Initiated");
 
     rtcRef.events.on("roomCreate", function(appObj, creatorConnectionObj, roomName, roomOptions, callback) {
