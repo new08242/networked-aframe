@@ -14,18 +14,18 @@ AFRAME.registerComponent('gun', {
         that.createBullet();
       }
     }
-    document.body.onclick = function(e){
-      that.spawnBox();
-    }
+    // document.body.onclick = function(e){
+    //   that.spawnBox();
+    // }
   },
 
   spawnBox: function() {
     let scene = document.querySelector('a-scene');
 
     let el = document.createElement('a-box');
-    el.setAttribute('networked');
+    el.setAttribute('networked', 'template:' + this.data.boxTemplate);
     el.setAttribute('remove-in-seconds', 3);
-    el.setAttribute('forward', 'speed:0.1');
+    el.setAttribute('forward', 'speed:0.3');
 
     let tip = document.querySelector('#gun-tip');
     el.setAttribute('position', this.getInitialBulletPosition(tip));
@@ -35,11 +35,10 @@ AFRAME.registerComponent('gun', {
   },
 
   createBullet: function() {
-    let that = this;
     let scene = document.querySelector('a-scene');
 
-    let el = document.createElement('a-entity');
-    el.setAttribute('networked', 'template:' + that.data.bulletTemplate);
+    let el = document.createElement('a-sphere');//TODO: a-entity will not spawn on shooter but other play will see why? a-sphere will spawn both
+    el.setAttribute('networked', 'template:' + this.data.bulletTemplate);
     el.setAttribute('remove-in-seconds', 3);
     el.setAttribute('forward', 'speed:0.1');
 
