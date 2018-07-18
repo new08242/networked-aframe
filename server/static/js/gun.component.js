@@ -1,4 +1,5 @@
 /*global AFRAME, THREE */
+/*eslint no-console: ["error", { allow: ["log"] }] */
 
 AFRAME.registerComponent('gun', {
   schema: {
@@ -29,21 +30,6 @@ AFRAME.registerComponent('gun', {
     // }
   },
 
-  spawnBox: function() {
-    let scene = document.querySelector('a-scene');
-
-    let el = document.createElement('a-box');
-    el.setAttribute('networked', 'template:' + this.data.boxTemplate);
-    el.setAttribute('remove-in-seconds', 3);
-    el.setAttribute('forward', 'speed:0.3');
-
-    let tip = document.querySelector('#gun-tip');
-    el.setAttribute('position', this.getInitialBulletPosition(tip));
-    el.setAttribute('rotation', this.getInitialBulletRotation(tip));
-
-    scene.appendChild(el);
-  },
-
   createBullet: function() {
     let scene = document.querySelector('a-scene');
 
@@ -51,11 +37,12 @@ AFRAME.registerComponent('gun', {
     let el = document.createElement('a-sphere');
     el.setAttribute('networked', 'template:' + this.data.bulletTemplate);
     el.setAttribute('remove-in-seconds', 3);
-    el.setAttribute('forward', 'speed:0.1');
+    // el.setAttribute('forward', 'speed:0.1');
 
     let tip = document.querySelector('#gun-tip');
     el.setAttribute('position', this.getInitialBulletPosition(tip));
     el.setAttribute('rotation', this.getInitialBulletRotation(tip));
+    el.setAttribute('impulse', 10);
 
     scene.appendChild(el);
   },

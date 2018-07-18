@@ -19,10 +19,11 @@
     <script src="js/forward.component.js"></script>
     <script src="js/remove-in-seconds.component.js"></script>
     <script src="js/player.component.js"></script>
+    <script src="js/impulse.component.js"></script>
   </head>
   <body>
 
-    <a-scene physics="debug: true" networked-scene="
+    <a-scene physics="gravity: 0; debug: true" networked-scene="
       room: shooter;
       debug: true;
     ">
@@ -35,7 +36,7 @@
 
         <!-- Avatar -->
         <template id="avatar-template">
-          <a-entity class="avatar" static-body="shape:sphere; sphereRadius:0.5" position="5 0.5 0">
+          <a-entity class="avatar" static-body="shape:sphere; sphereRadius:0.5">
             <a-sphere class="head"
               scale="0.45 0.5 0.4"
             ></a-sphere>
@@ -81,7 +82,7 @@
         <!-- Bullet -->
         <template id="bullet-template">
           <a-sphere id="bullet" class="bullet"
-            dynamic-body="shape:sphere; sphereRadius:0.1" 
+            dynamic-body="shape:sphere; sphereRadius:0.1"
             scale="0.1 0.1 0.1"
             color="#fff"
           ></a-sphere>
@@ -108,7 +109,7 @@
       </a-entity>
 
       <!-- Floor -->
-      <a-entity static-body position="0 0 0"
+      <a-entity static-body position="0 -1 0"
         geometry="primitive: plane; width: 10000; height: 10000;" rotation="-90 0 0"
         material="src: #grid; repeat: 10000 10000; transparent: true; metalness:0.6; roughness: 0.4; sphericalEnvMap: #sky;">
       </a-entity>

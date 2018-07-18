@@ -11,7 +11,7 @@ AFRAME.registerComponent('main-player', {
   init: function() {
     let that = this; //TODO: Why need this assign to that
     let playerEl = document.querySelector('#player');
-    console.log("playerEl:" + playerEl);
+    
     playerEl.addEventListener('collide', function (e) {
       // let element = e.detail.body.el
       // console.log('element:' + element)
@@ -23,13 +23,10 @@ AFRAME.registerComponent('main-player', {
       // console.log('Other entity, which playerEl touched:' + e.detail.body.el.id);    // Other entity, which playerEl touched.
       // console.log('Stats about the collision (CANNON.ContactEquation):' + e.detail.contact);    // Stats about the collision (CANNON.ContactEquation).
       // console.log('Normal (direction) of the collision (CANNON.Vec3):' + e.detail.contact.ni); // Normal (direction) of the collision (CANNON.Vec3).
-      if (e.detail.body.el.id == BULLET) {
+      if (e.detail.body.el.className == BULLET) {
         that.data.health -= 100;
+        console.log("player health:" + that.data.health);
       }
     });
-  },
-
-  tick: function() {
-      console.log("player health:" + this.data.health);
   },
 }); 
