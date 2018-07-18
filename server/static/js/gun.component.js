@@ -9,13 +9,23 @@ AFRAME.registerComponent('gun', {
 
   init: function() {
     let that = this; //TODO: Why need this assign to that
-    document.body.onkeyup = function(e){
-      if(e.keyCode == that.data.triggerKeyCode){
+    //for mobile touch to shoot
+    if (AFRAME.utils.device.isMobile()) {
+      document.body.addEventListener('touchstart', function(e){
+        that.createBullet();
+      }, false);
+    }
+    //for pc click to shoot
+    else {
+      document.body.onclick = function(e){
         that.createBullet();
       }
     }
-    // document.body.onclick = function(e){
-    //   that.spawnBox();
+
+    // document.body.onkeyup = function(e){
+    //   if(e.keyCode == that.data.triggerKeyCode){
+    //     that.createBullet();
+    //   }
     // }
   },
 
@@ -37,7 +47,8 @@ AFRAME.registerComponent('gun', {
   createBullet: function() {
     let scene = document.querySelector('a-scene');
 
-    let el = document.createElement('a-sphere');//TODO: a-entity will not spawn on shooter but other play will see why? a-sphere will spawn both
+    //TODO: a-entity will not spawn on shooter side, but other play will see why? a-sphere will spawn both
+    let el = document.createElement('a-sphere');
     el.setAttribute('networked', 'template:' + this.data.bulletTemplate);
     el.setAttribute('remove-in-seconds', 3);
     el.setAttribute('forward', 'speed:0.1');

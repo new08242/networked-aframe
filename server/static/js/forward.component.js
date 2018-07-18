@@ -1,5 +1,5 @@
 /*global AFRAME, THREE */
-/*eslint no-console: ["error", { allow: ["warn", "error"] }] */
+/*eslint no-console: ["error", { allow: ["log"] }] */
 
 AFRAME.registerComponent('forward', {
   schema: {
@@ -13,7 +13,7 @@ AFRAME.registerComponent('forward', {
     worldDirection.multiplyScalar(-1);
 
     this.worldDirection = worldDirection;
-    console.error(this.worldDirection);
+    console.log(this.worldDirection);
   },
 
   tick: function() {
