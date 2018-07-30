@@ -2,6 +2,7 @@
 /*eslint no-console: ["error", { allow: ["log"] }] */
 
 const BULLET = "bullet"
+// const BULLET_COLLISION = "bullet-collision"
 
 AFRAME.registerComponent('main-player', {
   schema: {
@@ -11,7 +12,9 @@ AFRAME.registerComponent('main-player', {
   init: function() {
     let that = this; //TODO: Why need this assign to that
     let playerEl = document.querySelector('#player');
-    
+
+    playerEl.addEventListener('beginContact ', function (e) { console.log("beginContact on player!!!!"); });
+
     playerEl.addEventListener('collide', function (e) {
       // let element = e.detail.body.el
       // console.log('element:' + element)

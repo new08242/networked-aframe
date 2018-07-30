@@ -4,7 +4,6 @@
 AFRAME.registerComponent('gun', {
   schema: {
     bulletTemplate: {default: '#bullet-template'},
-    boxTemplate: {default: '#blue-box-template'},
     triggerKeyCode: {default: 32} // spacebar
   },
 
@@ -22,18 +21,11 @@ AFRAME.registerComponent('gun', {
         that.createBullet();
       }
     }
-
-    // document.body.onkeyup = function(e){
-    //   if(e.keyCode == that.data.triggerKeyCode){
-    //     that.createBullet();
-    //   }
-    // }
   },
 
   createBullet: function() {
     let scene = document.querySelector('a-scene');
 
-    //TODO: a-entity will not spawn on shooter side, but other play will see why? a-sphere will spawn both
     let el = document.createElement('a-sphere');
     el.setAttribute('networked', 'template:' + this.data.bulletTemplate);
     el.setAttribute('remove-in-seconds', 3);
@@ -42,7 +34,6 @@ AFRAME.registerComponent('gun', {
     let tip = document.querySelector('#gun-tip');
     el.setAttribute('position', this.getInitialBulletPosition(tip));
     el.setAttribute('rotation', this.getInitialBulletRotation(tip));
-    el.setAttribute('impulse', 10);
 
     scene.appendChild(el);
   },

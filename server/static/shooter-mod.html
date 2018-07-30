@@ -80,11 +80,19 @@
         </template>
 
         <!-- Bullet -->
+        <!-- <template id="bullet-template"> 
+          <a-sphere id="bullet" class="bullet" 
+            dynamic-body="shape:sphere; sphereRadius:0.1" 
+            scale="0.1 0.1 0.1" 
+            color="#fff" 
+          ></a-sphere> 
+        </template>  -->
         <template id="bullet-template">
           <a-sphere id="bullet" class="bullet"
             dynamic-body="shape:sphere; sphereRadius:0.1"
             scale="0.1 0.1 0.1"
             color="#fff"
+            impulse
           ></a-sphere>
         </template>
 
