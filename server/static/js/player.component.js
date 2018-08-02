@@ -13,7 +13,7 @@ AFRAME.registerComponent('main-player', {
     let that = this; //TODO: Why need this assign to that
     let playerEl = document.querySelector('#player');
 
-    playerEl.addEventListener('beginContact ', function (e) { console.log("beginContact on player!!!!"); });
+    // playerEl.addEventListener('beginContact ', function (e) { console.log("beginContact on player!!!!"); });
 
     playerEl.addEventListener('collide', function (e) {
       // let element = e.detail.body.el

@@ -1,7 +1,7 @@
 /*global AFRAME, THREE, CANNON */
 /*eslint no-console: ["error", { allow: ["log"] }] */
 
-AFRAME.registerComponent('impulse', {
+AFRAME.registerComponent('force-forward', {
   schema: {
     force: {default: 1000},
   },
@@ -9,7 +9,8 @@ AFRAME.registerComponent('impulse', {
   init: function () {
     let elementObject = this.el.object3D;
     let elementBody = this.el.body;
-    console.log('impulseeeeee object:' + elementBody.velocity)
+
+    // console.log('impulseeeeee object:' + elementBody.velocity)
     // for (let property in bulletBody) {
     //   console.log('property:' + property + ', value:' + bulletBody[property]);
     // }

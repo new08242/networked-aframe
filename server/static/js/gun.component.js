@@ -28,7 +28,9 @@ AFRAME.registerComponent('gun', {
 
     let el = document.createElement('a-sphere');
     el.setAttribute('networked', 'template:' + this.data.bulletTemplate);
-    el.setAttribute('remove-in-seconds', 3);
+    el.setAttribute('remove-on-collide', 0);
+    el.setAttribute('force-forward', 'force:1000');
+    // el.setAttribute('remove-in-seconds', 3);
     // el.setAttribute('forward', 'speed:0.1');
 
     let tip = document.querySelector('#gun-tip');
