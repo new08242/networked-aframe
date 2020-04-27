@@ -4,22 +4,41 @@
     <title>Dev Example — Networked-Aframe</title>
     <meta name="description" content="Dev Example — Networked-Aframe">
 
-    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <script src="/build.js"></script>
-    <script>window.NAF || document.write('<script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js">\x3C/script>')</script>
+
+    <style>
+      .controls {
+        position: absolute;
+        width: 100%;
+        display: flex;
+        flex: 1;
+        justify-content: center;
+        flex-direction: row;
+        top: 0;
+      }
+
+      .controls p {
+        font-family: monospace;
+        color: white;
+      }
+    </style>
 
     <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
     <script src="https://unpkg.com/aframe-particle-system-component@1.0.5/dist/aframe-particle-system-component.min.js"></script>
     <script src="/js/spawn-in-circle.component.js"></script>
+    <script src="/js/spawner.component.js"></script>
+    <script src="/js/toggle-ownership.component.js"></script>
+
   </head>
   <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
-    <script src="/easyrtc/easyrtc.js"></script>
-    <a-scene networked-scene="
-      room: dev;
-      debug: true;
-      adapter: easyrtc;
-    ">
+    <a-scene
+      networked-scene="
+        room: dev;
+        debug: true;
+        adapter: socketio;
+      ">
       <a-assets>
 
         <img id="grid" src="https://img.gs/bbdkhfbzkk/stretch/https://i.imgur.com/25P1geh.png" crossorigin="anonymous">
@@ -31,7 +50,6 @@
         <template id="avatar-template">
           <a-entity class="avatar">
             <a-sphere class="head"
-              color="#ffffff"
               scale="0.45 0.5 0.4"
             ></a-sphere>
             <a-entity class="face"
@@ -63,10 +81,23 @@
           </a-entity>
         </template>
 
+        <template id="cube-template">
+          <a-entity>
+            <a-box class="cube" toggle-ownership color="#F00"></a-box>
+          </a-entity>
+        </template>
+
         <!-- /Templates -->
       </a-assets>
 
-      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" camera="userHeight: 1.6" spawn-in-circle="radius:3" wasd-controls look-controls>
+      <a-entity id="player"
+        networked="template:#avatar-template;attachTemplateToLocal:false;"
+        camera
+        position="0 1.6 0"
+        spawn-in-circle="radius:3"
+        spawner="template:#cube-template"
+        wasd-controls look-controls
+        >
         <a-sphere class="head"
           visible="false"
           random-color
@@ -83,6 +114,10 @@
       <a-sky src="#sky" rotation="0 -90 0"></a-sky>
       <a-entity id="particles" particle-system="preset: snow"></a-entity>
     </a-scene>
+
+    <div class="controls">
+      <p>Press space to spawn a cube. Press enter to take ownership of all cubes.</p>
+    </div>
 
     <!-- GitHub Corner. -->
     <a href="https://github.com/haydenjameslee/networked-aframe" class="github-corner">
@@ -114,6 +149,27 @@
             selector: '.head',
             component: 'material',
             property: 'color'
+          }
+        ]
+      });
+
+      NAF.schemas.add({
+        template: '#cube-template',
+        components: [
+          "position",
+          {
+            selector: '.cube',
+            component: 'rotation'
+          },
+          {
+            selector: '.cube',
+            component: 'material',
+            property: 'color'
+          },
+          {
+            selector: '.cube',
+            component: 'toggle-ownership',
+            property: 'direction'
           }
         ]
       });

@@ -1,4 +1,4 @@
-/* global assert, process, setup, suite, test, teardown */
+/* global assert, setup, suite, test, teardown */
 require('aframe');
 var helpers = require('./helpers');
 var naf = require('../../src/NafIndex');
@@ -22,7 +22,6 @@ suite('networked attachTemplateToLocal:false', function() {
   }
 
   setup(function(done) {
-    naf.options.compressSyncPackets = false;
     naf.connection.setNetworkAdapter(new helpers.MockNetworkAdapter());
     initScene(function() {
       entity = document.querySelector('#test-entity');

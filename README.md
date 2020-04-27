@@ -10,9 +10,9 @@ Networked-Aframe
 
 **Multi-user VR on the Web**
 
-Write full-featured multi-user VR experiences entirely in HTML.
+A framework for writing multi-user VR apps in HTML and JS.
 
-Built on top of the wonderful [A-Frame](https://aframe.io/).
+Built on top of [A-Frame](https://aframe.io/).
 
 <div>
   <a href="#features">Features</a>
@@ -31,13 +31,11 @@ Built on top of the wonderful [A-Frame](https://aframe.io/).
 
 Features
 --------
-* Includes everything you need to create multi-user WebVR apps and games.
 * Support for WebRTC and/or WebSocket connections.
 * Voice chat. Audio streaming to let your users talk in-app (WebRTC only).
-* Bandwidth sensitive. Only send network updates when things change. Option to further compress network packets.
+* Bandwidth sensitive. Only send network updates when things change.
+* Cross-platform. Works on all modern Desktop and Mobile browsers. Oculus Rift, Oculus Quest, HTC Vive and Google Cardboard.
 * Extendable. Sync any A-Frame component, including your own, without changing the component code at all.
-* Cross-platform. Works on all modern Desktop and Mobile browsers. Oculus Rift, HTC Vive and Google Cardboard + Daydream support.
-* Firebase WebRTC signalling support
 
 
 Getting Started
@@ -52,7 +50,7 @@ To run the examples on your own PC:
  ```sh
 git clone https://github.com/networked-aframe/networked-aframe.git  # Clone the repository.
 cd networked-aframe
-npm install && npm run easyrtc-install  # Install dependencies.
+npm install  # Install dependencies.
 npm run dev  # Start the local development server.
 ```
 With the server running, browse the examples at `http://localhost:8080`. Open another browser tab and point it to the same URL to see the other client.
@@ -66,9 +64,8 @@ Basic Example
 <html>
   <head>
     <title>My Networked-Aframe Scene</title>
-    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
-    <script src="easyrtc/easyrtc.js"></script>
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js"></script>
   </head>
   <body>
@@ -124,7 +121,7 @@ Required on the A-Frame `<a-scene>` component.
   room: <roomName>;
   connectOnLoad: true;
   onConnect: onConnect;
-  adapter: wseasyrtc;
+  adapter: socketio;
   audio: false;
   debug: false;
 ">
@@ -139,7 +136,7 @@ Required on the A-Frame `<a-scene>` component.
 | room  | Unique room name. Can be multiple per app. Spaces are not allowed. There can be multiple rooms per app and clients can only connect to clients in the same app & room. | default |
 | connectOnLoad  | Connect to the server as soon as the webpage loads. | true |
 | onConnect  | Function to be called when client has successfully connected to the server. | onConnect |
-| adapter | The network service that you wish to use, see [adapters](#adapters). | wseasyrtc |
+| adapter | The network service that you wish to use, see [adapters](#adapters). | socketio |
 | audio  | Turn on / off microphone audio streaming for your app. Only works if the chosen adapter supports it. | false |
 | debug  | Turn on / off Networked-Aframe debug logs. | false |
 
@@ -220,6 +217,7 @@ Templates must only have one root element. When `attachTemplateToLocal` is set t
 | -------- | ------------ | --------------
 | template  | A css selector to a template tag stored in `<a-assets>` | ''
 | attachTemplateToLocal  | Does not attach the template for the local user when set to false. This is useful when there is different behavior locally and remotely. | true
+| persistent | On remote owner disconnect, attempts to take ownership of persistent entities rather than delete them | false
 
 
 ### Deleting Networked Entities
@@ -299,7 +297,7 @@ Subscribe and unsubscribe callbacks to network messages specified by `dataType`.
 
 ### Transfer Entity Ownership
 
-The owner of an entity is responsible for syncing its component data. When a user wants to modify another user's entity they must first take ownership of that entity. The [ownership transfer example](./server/static/ownership-transfer.html) and the [toggle-ownership component](./server/static/js/toggle-ownership.component.js) show how to take ownership of an entity and update it.
+The owner of an entity is responsible for syncing its component data. When a user wants to modify another user's entity they must first take ownership of that entity. The [ownership transfer example](./examples/ownership-transfer.html) and the [toggle-ownership component](./examples/js/toggle-ownership.component.js) show how to take ownership of an entity and update it.
 
 ```javascript
 NAF.utils.takeOwnership(entityEl)
@@ -323,7 +321,7 @@ document.body.addEventListener('clientConnected', function (evt) {
   console.error('clientConnected event. clientId =', evt.detail.clientId);
 });
 ```
-Events need to be subscribed after the document.body element has been created. This could be achieved by waiting for the document.body `onLoad` method, or by using NAF's `onConnect` function. Use the [NAF Events Demo](https://github.com/networked-aframe/networked-aframe/blob/master/server/static/basic-events.html#L30) as an example.
+Events need to be subscribed after the document.body element has been created. This could be achieved by waiting for the document.body `onLoad` method, or by using NAF's `onConnect` function. Use the [NAF Events Demo](https://github.com/networked-aframe/networked-aframe/blob/master/examples/basic-events.html#L30) as an example.
 
 List of events:
 
@@ -332,9 +330,9 @@ List of events:
 | clientConnected | Fired when another client connects to you | `evt.detail.clientId` - ClientId of connecting client |
 | clientDisconnected | Fired when another client disconnects from you | `evt.detail.clientId` - ClientId of disconnecting client |
 | entityCreated | Fired when a networked entity is created | `evt.detail.el` - new entity |
-| entityDeleted | Fired when a networked entity is deleted | `evt.detail.networkId` - networkId of deleted entity |
+| entityRemoved | Fired when a networked entity is deleted | `evt.detail.networkId` - networkId of deleted entity |
 
-The following events are fired on the `networked` component. See the [toggle-ownership component](./server/static/js/toggle-ownership.component.js) for examples.
+The following events are fired on the `networked` component. See the [toggle-ownership component](./examples/js/toggle-ownership.component.js) for examples.
 
 List of ownership transfer events:
 
@@ -360,21 +358,24 @@ NAF can be used with multiple network libraries and services. An adapter is a cl
 
 I'll write up a post on the answers to these questions soon (please [bug me](https://github.com/networked-aframe/networked-aframe/issues) about it if you're interested).
 
-By default the `wsEasyRtc` adapter is used, which is an implementation of the open source [EasyRTC](https://github.com/priologic/easyrtc) library that only uses the WebSocket connection. To quickly try WebRTC instead of WebSockets, change the adapter to `easyrtc`, which also supports audio. If you're interested in contributing to NAF a great opportunity is to add support for more adapters and send a pull request.
+By default the `socketio` adapter is used, which does not support audio and uses a TCP connection. This is not ideal for production deployments however due to inherent connection issues with WebRTC we've set it as the default. To use WebRTC instead of WebSockets, change the adapter to `webrtc`, which supports audio and uses a UDP.
+
+If you're interested in contributing to NAF a great opportunity is to add support for more adapters and send a pull request.
 
 List of the supported adapters:
 
 | Adapter | Description | Supports Audio | WebSockets or WebRTC | How to start |
 | -------- | ----------- | ------------- | ----------- | ---------- |
-| wsEasyRTC | DEFAULT - [EasyRTC](https://github.com/priologic/easyrtc) that only uses the WebSocket connection | No | WebSockets | `npm run start` |
-| EasyRTC | [EasyRTC](https://github.com/priologic/easyrtc) | Yes | WebRTC | `npm run start` |
-| uWS | Custom implementation of [uWebSockets](https://github.com/uNetworking/uWebSockets) | No | WebSockets | See [naf-uws-adapter](https://github.com/networked-aframe/naf-uws-adapter) |
+| socketio | DEFAULT - SocketIO implementation | No | WebSockets only | `npm run start` |
+| webrtc | Native WebRTC implementation | Yes | Both | `npm run start` |
 | Firebase | [Firebase](https://firebase.google.com/) for WebRTC signalling | No | WebRTC | See [naf-firebase-adapter](https://github.com/networked-aframe/naf-firebase-adapter) |
+| uWS | Implementation of [uWebSockets](https://github.com/uNetworking/uWebSockets) | No | WebSockets | See [naf-uws-adapter](https://github.com/networked-aframe/naf-uws-adapter) |
+| EasyRTC | [EasyRTC](https://github.com/priologic/easyrtc) | Yes | Both | See [naf-easyrtc-adapter](https://github.com/networked-aframe/naf-easyrtc-adapter) |
 | Deepstream | [DeepstreamHub](https://deepstreamhub.com/) for WebRTC signalling | No | WebRTC | See [naf-deepstream-adapter](https://github.com/networked-aframe/naf-deepstream-adapter) |
 
 ### Audio
 
-After adding `audio: true` to the `networked-scene` component (and using an adapter that supports it) you will not hear any audio by default. Though the audio will be streaming, it will not be audible until an entity with a `networked-audio-source` is created. The audio from the owner of this entity will be emitted in 3d space from that entities position. The `networked-audio-source` component must be added to an entity (or a child of an entity) with the `networked` component.
+After adding `audio: true` to the `networked-scene` component (and using an adapter that supports it) you will not hear any audio by default. Though the audio will be streaming, it will not be audible until an entity with a `networked-audio-source` is created. The audio from the owner of this entity will be emitted in 3D space from that entities position. The `networked-audio-source` component must be added to an entity (or a child of an entity) with the `networked` component.
 
 To quickly get started, try the [Glitch NAF Audio Example](https://glitch.com/edit/#!/networked-aframe-audio?path=public/index.html).
 
@@ -407,14 +408,6 @@ NAF.options.useLerp
 
 By default when an entity is created the [`aframe-lerp-component`](https://github.com/haydenjameslee/aframe-lerp-component) is attached to smooth out position and rotation network updates. Set this to false if you don't want the lerp component to be attached on creation.
 
-```javascript
-NAF.options.compressSyncPackets
-```
-
-Compress each sync packet into a minimized but harder to read JSON object for saving bandwidth. Default is `false`.
-
-To measure bandwidth usage, run two clients on Chrome and visit chrome://webrtc-internals
-
 Stay in Touch
 -------------
 
@@ -429,9 +422,10 @@ Help and More Information
 * [Getting started tutorial](https://github.com/networked-aframe/networked-aframe/blob/master/docs/getting-started-local.md)
 * [Edit live example on glitch.com](https://glitch.com/~networked-aframe)
 * [Live demo site](http://haydenlee.io/networked-aframe)
+* [Networked-Aframe Adapters](https://github.com/networked-aframe)
 * [A-Frame](https://aframe.io/)
-* [WebVR](https://webvr.info/)
-* [EasyRTC WebRTC library](http://www.easyrtc.com/)
+* [WebXR](https://github.com/immersive-web/webxr)
+* [Hayden Lee, NAF Creator and Maintainer](https://twitter.com/haydenlee37)
 * Bugs and requests can be filed on [GitHub Issues](https://github.com/networked-aframe/networked-aframe/issues)
 
 
@@ -444,8 +438,8 @@ Folder Structure
    * Packaged source code for deployment
  * `/server/`
    * Server code
- * `/server/static/`
-   * Examples
+ * `/examples/`
+   * Example experiences
  * `/src/`
    * Client source code
  * `/tests/`
@@ -460,13 +454,6 @@ Roadmap
 * [Add your suggestions](https://github.com/networked-aframe/networked-aframe/issues)
 
 Interested in contributing? [Open an issue](https://github.com/networked-aframe/networked-aframe/issues) or send a pull request.
-
-
-Warning
---------
-
-NAF is not supported on nodejs version 7.2.0. Please use a different version of nodejs.
-
 
 
 License

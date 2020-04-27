@@ -1,4 +1,4 @@
-/* global assert, process, setup, suite, test, sinon, teardown */
+/* global assert, setup, suite, test, sinon, teardown */
 var NetworkConnection = require('../../src/NetworkConnection');
 var AdapterFactory = require('../../src/adapters/AdapterFactory');
 var naf = require('../../src/NafIndex');
@@ -12,6 +12,7 @@ suite('NetworkConnection', function() {
     this.completeSync = sinon.stub();
     this.removeEntitiesOfClient = sinon.stub();
     this.updateEntity = sinon.stub();
+    this.updateEntityMulti = sinon.stub();
     this.removeRemoteEntity = sinon.stub();
     this.removeEntity = sinon.stub();
   }
@@ -380,7 +381,7 @@ suite('NetworkConnection', function() {
 
       connection.unsubscribeToDataChannel(dataType);
 
-      assert.isFalse(connection.dataChannelSubs.hasOwnProperty(dataType));
+      assert.isTrue(!connection.dataChannelSubs[dataType]);
     });
   });
 

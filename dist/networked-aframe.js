@@ -1,2700 +1,293 @@
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
-
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-
+/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
 /******/ 		};
-
+/******/
 /******/ 		// Execute the module function
 /******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-
+/******/
 /******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-
+/******/ 		module.l = true;
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-
-
+/******/
+/******/
 /******/ 	// expose the modules object (__webpack_modules__)
 /******/ 	__webpack_require__.m = modules;
-
+/******/
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
-
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
-
+/******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/index.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./node_modules/buffered-interpolation/dist/buffered-interpolation.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/buffered-interpolation/dist/buffered-interpolation.js ***!
+  \****************************************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	// Dependencies
-	__webpack_require__(1);
-
-	// Global vars and functions
-	__webpack_require__(3);
-
-	// Network components
-	__webpack_require__(16);
-	__webpack_require__(17);
-	__webpack_require__(23);
+"use strict";
+eval("\n\nvar _createClass = function () {\n  function defineProperties(target, props) {\n    for (var i = 0; i < props.length; i++) {\n      var descriptor = props[i];\n      descriptor.enumerable = descriptor.enumerable || false;\n      descriptor.configurable = true;\n      if (\"value\" in descriptor) descriptor.writable = true;\n      Object.defineProperty(target, descriptor.key, descriptor);\n    }\n  }\n\n  return function (Constructor, protoProps, staticProps) {\n    if (protoProps) defineProperties(Constructor.prototype, protoProps);\n    if (staticProps) defineProperties(Constructor, staticProps);\n    return Constructor;\n  };\n}();\n\nfunction _classCallCheck(instance, Constructor) {\n  if (!(instance instanceof Constructor)) {\n    throw new TypeError(\"Cannot call a class as a function\");\n  }\n}\n/* global THREE */\n\n\nvar INITIALIZING = 0;\nvar BUFFERING = 1;\nvar PLAYING = 2;\nvar MODE_LERP = 0;\nvar MODE_HERMITE = 1;\nvar vectorPool = [];\nvar quatPool = [];\nvar framePool = [];\n\nvar getPooledVector = function getPooledVector() {\n  return vectorPool.shift() || new THREE.Vector3();\n};\n\nvar getPooledQuaternion = function getPooledQuaternion() {\n  return quatPool.shift() || new THREE.Quaternion();\n};\n\nvar getPooledFrame = function getPooledFrame() {\n  var frame = framePool.pop();\n\n  if (!frame) {\n    frame = {\n      position: new THREE.Vector3(),\n      velocity: new THREE.Vector3(),\n      scale: new THREE.Vector3(),\n      quaternion: new THREE.Quaternion(),\n      time: 0\n    };\n  }\n\n  return frame;\n};\n\nvar freeFrame = function freeFrame(f) {\n  return framePool.push(f);\n};\n\nvar InterpolationBuffer = function () {\n  function InterpolationBuffer() {\n    var mode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MODE_LERP;\n    var bufferTime = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0.15;\n\n    _classCallCheck(this, InterpolationBuffer);\n\n    this.state = INITIALIZING;\n    this.buffer = [];\n    this.bufferTime = bufferTime * 1000;\n    this.time = 0;\n    this.mode = mode;\n    this.originFrame = getPooledFrame();\n    this.position = new THREE.Vector3();\n    this.quaternion = new THREE.Quaternion();\n    this.scale = new THREE.Vector3(1, 1, 1);\n  }\n\n  _createClass(InterpolationBuffer, [{\n    key: \"hermite\",\n    value: function hermite(target, t, p1, p2, v1, v2) {\n      var t2 = t * t;\n      var t3 = t * t * t;\n      var a = 2 * t3 - 3 * t2 + 1;\n      var b = -2 * t3 + 3 * t2;\n      var c = t3 - 2 * t2 + t;\n      var d = t3 - t2;\n      target.copy(p1.multiplyScalar(a));\n      target.add(p2.multiplyScalar(b));\n      target.add(v1.multiplyScalar(c));\n      target.add(v2.multiplyScalar(d));\n    }\n  }, {\n    key: \"lerp\",\n    value: function lerp(target, v1, v2, alpha) {\n      target.lerpVectors(v1, v2, alpha);\n    }\n  }, {\n    key: \"slerp\",\n    value: function slerp(target, r1, r2, alpha) {\n      THREE.Quaternion.slerp(r1, r2, target, alpha);\n    }\n  }, {\n    key: \"updateOriginFrameToBufferTail\",\n    value: function updateOriginFrameToBufferTail() {\n      freeFrame(this.originFrame);\n      this.originFrame = this.buffer.shift();\n    }\n  }, {\n    key: \"appendBuffer\",\n    value: function appendBuffer(position, velocity, quaternion, scale) {\n      var tail = this.buffer.length > 0 ? this.buffer[this.buffer.length - 1] : null; // update the last entry in the buffer if this is the same frame\n\n      if (tail && tail.time === this.time) {\n        if (position) {\n          tail.position.copy(position);\n        }\n\n        if (velocity) {\n          tail.velocity.copy(velocity);\n        }\n\n        if (quaternion) {\n          tail.quaternion.copy(quaternion);\n        }\n\n        if (scale) {\n          tail.scale.copy(scale);\n        }\n      } else {\n        var priorFrame = tail || this.originFrame;\n        var newFrame = getPooledFrame();\n        newFrame.position.copy(position || priorFrame.position);\n        newFrame.velocity.copy(velocity || priorFrame.velocity);\n        newFrame.quaternion.copy(quaternion || priorFrame.quaternion);\n        newFrame.scale.copy(scale || priorFrame.scale);\n        newFrame.time = this.time;\n        this.buffer.push(newFrame);\n      }\n    }\n  }, {\n    key: \"setTarget\",\n    value: function setTarget(position, velocity, quaternion, scale) {\n      this.appendBuffer(position, velocity, quaternion, scale);\n    }\n  }, {\n    key: \"setPosition\",\n    value: function setPosition(position, velocity) {\n      this.appendBuffer(position, velocity, null, null);\n    }\n  }, {\n    key: \"setQuaternion\",\n    value: function setQuaternion(quaternion) {\n      this.appendBuffer(null, null, quaternion, null);\n    }\n  }, {\n    key: \"setScale\",\n    value: function setScale(scale) {\n      this.appendBuffer(null, null, null, scale);\n    }\n  }, {\n    key: \"update\",\n    value: function update(delta) {\n      if (this.state === INITIALIZING) {\n        if (this.buffer.length > 0) {\n          this.updateOriginFrameToBufferTail();\n          this.position.copy(this.originFrame.position);\n          this.quaternion.copy(this.originFrame.quaternion);\n          this.scale.copy(this.originFrame.scale);\n          this.state = BUFFERING;\n        }\n      }\n\n      if (this.state === BUFFERING) {\n        if (this.buffer.length > 0 && this.time > this.bufferTime) {\n          this.state = PLAYING;\n        }\n      }\n\n      if (this.state === PLAYING) {\n        var mark = this.time - this.bufferTime; //Purge this.buffer of expired frames\n\n        while (this.buffer.length > 0 && mark > this.buffer[0].time) {\n          //if this is the last frame in the buffer, just update the time and reuse it\n          if (this.buffer.length > 1) {\n            this.updateOriginFrameToBufferTail();\n          } else {\n            this.originFrame.position.copy(this.buffer[0].position);\n            this.originFrame.velocity.copy(this.buffer[0].velocity);\n            this.originFrame.quaternion.copy(this.buffer[0].quaternion);\n            this.originFrame.scale.copy(this.buffer[0].scale);\n            this.originFrame.time = this.buffer[0].time;\n            this.buffer[0].time = this.time + delta;\n          }\n        }\n\n        if (this.buffer.length > 0 && this.buffer[0].time > 0) {\n          var targetFrame = this.buffer[0];\n          var delta_time = targetFrame.time - this.originFrame.time;\n          var alpha = (mark - this.originFrame.time) / delta_time;\n\n          if (this.mode === MODE_LERP) {\n            this.lerp(this.position, this.originFrame.position, targetFrame.position, alpha);\n          } else if (this.mode === MODE_HERMITE) {\n            this.hermite(this.position, alpha, this.originFrame.position, targetFrame.position, this.originFrame.velocity.multiplyScalar(delta_time), targetFrame.velocity.multiplyScalar(delta_time));\n          }\n\n          this.slerp(this.quaternion, this.originFrame.quaternion, targetFrame.quaternion, alpha);\n          this.lerp(this.scale, this.originFrame.scale, targetFrame.scale, alpha);\n        }\n      }\n\n      if (this.state !== INITIALIZING) {\n        this.time += delta;\n      }\n    }\n  }, {\n    key: \"getPosition\",\n    value: function getPosition() {\n      return this.position;\n    }\n  }, {\n    key: \"getQuaternion\",\n    value: function getQuaternion() {\n      return this.quaternion;\n    }\n  }, {\n    key: \"getScale\",\n    value: function getScale() {\n      return this.scale;\n    }\n  }]);\n\n  return InterpolationBuffer;\n}();\n\nmodule.exports = InterpolationBuffer;\n\n//# sourceURL=webpack:///./node_modules/buffered-interpolation/dist/buffered-interpolation.js?");
 
 /***/ }),
-/* 1 */
+
+/***/ "./src/ChildEntityCache.js":
+/*!*********************************!*\
+  !*** ./src/ChildEntityCache.js ***!
+  \*********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	/* global AFRAME THREE */
-
-	if (typeof AFRAME === 'undefined') {
-	  throw new Error('Component attempted to register before AFRAME was available.');
-	}
-
-	var degToRad = THREE.Math.degToRad;
-	var almostEqual = __webpack_require__(2);
-	/**
-	 * Linear Interpolation component for A-Frame.
-	 */
-	AFRAME.registerComponent('lerp', {
-	  schema: {
-	    properties: { default: ['position', 'rotation', 'scale'] }
-	  },
-
-	  /**
-	   * Called once when component is attached. Generally for initial setup.
-	   */
-	  init: function init() {
-	    var el = this.el;
-	    this.lastPosition = el.getAttribute('position');
-	    this.lastRotation = el.getAttribute('rotation');
-	    this.lastScale = el.getAttribute('scale');
-
-	    this.lerpingPosition = false;
-	    this.lerpingRotation = false;
-	    this.lerpingScale = false;
-
-	    this.timeOfLastUpdate = 0;
-	  },
-
-	  /**
-	   * Called on each scene tick.
-	   */
-	  tick: function tick(time, deltaTime) {
-	    var progress;
-	    var now = this.now();
-	    var obj3d = this.el.object3D;
-
-	    this.checkForComponentChanged();
-
-	    // Lerp position
-	    if (this.lerpingPosition) {
-	      progress = (now - this.startLerpTimePosition) / this.duration;
-	      obj3d.position.lerpVectors(this.startPosition, this.targetPosition, progress);
-	      // console.log("new position", obj3d.position);
-	      if (progress >= 1) {
-	        this.lerpingPosition = false;
-	      }
-	    }
-
-	    // Slerp rotation
-	    if (this.lerpingRotation) {
-	      progress = (now - this.startLerpTimeRotation) / this.duration;
-	      THREE.Quaternion.slerp(this.startRotation, this.targetRotation, obj3d.quaternion, progress);
-	      if (progress >= 1) {
-	        this.lerpingRotation = false;
-	      }
-	    }
-
-	    // Lerp scale
-	    if (this.lerpingScale) {
-	      progress = (now - this.startLerpTimeScale) / this.duration;
-	      obj3d.scale.lerpVectors(this.startScale, this.targetScale, progress);
-	      if (progress >= 1) {
-	        this.lerpingScale = false;
-	      }
-	    }
-	  },
-
-	  checkForComponentChanged: function checkForComponentChanged() {
-	    var el = this.el;
-
-	    var hasChanged = false;
-
-	    var newPosition = el.getAttribute('position');
-	    if (this.isLerpable('position') && !this.almostEqualVec3(this.lastPosition, newPosition)) {
-	      this.toPosition(this.lastPosition, newPosition);
-	      this.lastPosition = newPosition;
-	      hasChanged = true;
-	    }
-
-	    var newRotation = el.getAttribute('rotation');
-	    if (this.isLerpable('rotation') && !this.almostEqualVec3(this.lastRotation, newRotation)) {
-	      this.toRotation(this.lastRotation, newRotation);
-	      this.lastRotation = newRotation;
-	      hasChanged = true;
-	    }
-
-	    var newScale = el.getAttribute('scale');
-	    if (this.isLerpable('scale') && !this.almostEqualVec3(this.lastScale, newScale)) {
-	      this.toScale(this.lastScale, newScale);
-	      this.lastScale = newScale;
-	      hasChanged = true;
-	    }
-
-	    if (hasChanged) {
-	      this.updateDuration();
-	    }
-	  },
-
-	  isLerpable: function isLerpable(name) {
-	    return this.data.properties.indexOf(name) != -1;
-	  },
-
-	  updateDuration: function updateDuration() {
-	    var now = this.now();
-	    this.duration = now - this.timeOfLastUpdate;
-	    this.timeOfLastUpdate = now;
-	  },
-
-	  /**
-	   * Start lerp to position (vec3)
-	   */
-	  toPosition: function toPosition(from, to) {
-	    this.lerpingPosition = true;
-	    this.startLerpTimePosition = this.now();
-	    this.startPosition = new THREE.Vector3(from.x, from.y, from.z);
-	    this.targetPosition = new THREE.Vector3(to.x, to.y, to.z);
-	  },
-
-	  /**
-	   * Start lerp to euler rotation (vec3,'YXZ')
-	   */
-	  toRotation: function toRotation(from, to) {
-	    this.lerpingRotation = true;
-	    this.startLerpTimeRotation = this.now();
-	    this.startRotation = new THREE.Quaternion();
-	    this.startRotation.setFromEuler(new THREE.Euler(degToRad(from.x), degToRad(from.y), degToRad(from.z), 'YXZ'));
-	    this.targetRotation = new THREE.Quaternion();
-	    this.targetRotation.setFromEuler(new THREE.Euler(degToRad(to.x), degToRad(to.y), degToRad(to.z), 'YXZ'));
-	  },
-
-	  /**
-	   * Start lerp to scale (vec3)
-	   */
-	  toScale: function toScale(from, to) {
-	    this.lerpingScale = true;
-	    this.startLerpTimeScale = this.now();
-	    this.startScale = new THREE.Vector3(from.x, from.y, from.z);
-	    this.targetScale = new THREE.Vector3(to.x, to.y, to.z);
-	  },
-
-	  almostEqualVec3: function almostEqualVec3(a, b) {
-	    return almostEqual(a.x, b.x) && almostEqual(a.y, b.y) && almostEqual(a.z, b.z);
-	  },
-
-	  /**
-	   * Returns the current time in milliseconds (ms)
-	   */
-	  now: function now() {
-	    return Date.now();
-	  }
-	});
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\nvar ChildEntityCache =\n/*#__PURE__*/\nfunction () {\n  function ChildEntityCache() {\n    _classCallCheck(this, ChildEntityCache);\n\n    this.dict = {};\n  }\n\n  _createClass(ChildEntityCache, [{\n    key: \"addChild\",\n    value: function addChild(parentNetworkId, childData) {\n      if (!this.hasParent(parentNetworkId)) {\n        this.dict[parentNetworkId] = [];\n      }\n\n      this.dict[parentNetworkId].push(childData);\n    }\n  }, {\n    key: \"getChildren\",\n    value: function getChildren(parentNetworkId) {\n      if (!this.hasParent(parentNetworkId)) {\n        return [];\n      }\n\n      var children = this.dict[parentNetworkId];\n      delete this.dict[parentNetworkId];\n      return children;\n    }\n    /* Private */\n\n  }, {\n    key: \"hasParent\",\n    value: function hasParent(parentId) {\n      return !!this.dict[parentId];\n    }\n  }]);\n\n  return ChildEntityCache;\n}();\n\nmodule.exports = ChildEntityCache;\n\n//# sourceURL=webpack:///./src/ChildEntityCache.js?");
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
 
-	"use strict";
-
-	var abs = Math.abs,
-	    min = Math.min;
-
-	function almostEqual(a, b, absoluteError, relativeError) {
-	  var d = abs(a - b);
-
-	  if (absoluteError == null) absoluteError = almostEqual.DBL_EPSILON;
-	  if (relativeError == null) relativeError = absoluteError;
-
-	  if (d <= absoluteError) {
-	    return true;
-	  }
-	  if (d <= relativeError * min(abs(a), abs(b))) {
-	    return true;
-	  }
-	  return a === b;
-	}
-
-	almostEqual.FLT_EPSILON = 1.19209290e-7;
-	almostEqual.DBL_EPSILON = 2.2204460492503131e-16;
-
-	module.exports = almostEqual;
-
-/***/ }),
-/* 3 */
+/***/ "./src/DeepEquals.js":
+/*!***************************!*\
+  !*** ./src/DeepEquals.js ***!
+  \***************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var options = __webpack_require__(4);
-	var utils = __webpack_require__(5);
-	var NafLogger = __webpack_require__(6);
-	var Schemas = __webpack_require__(7);
-	var NetworkEntities = __webpack_require__(8);
-	var NetworkConnection = __webpack_require__(10);
-	var AdapterFactory = __webpack_require__(11);
-
-	var naf = {};
-	naf.app = '';
-	naf.room = '';
-	naf.clientId = '';
-	naf.options = options;
-	naf.utils = utils;
-	naf.log = new NafLogger();
-	naf.schemas = new Schemas();
-	naf.version = "0.6.1";
-
-	naf.adapters = new AdapterFactory();
-	var entities = new NetworkEntities();
-	var connection = new NetworkConnection(entities);
-	naf.connection = connection;
-	naf.entities = entities;
-
-	module.exports = window.NAF = naf;
+"use strict";
+eval("// Patched version of fast-deep-equal which does not\n// allocate memory via calling Object.keys\n//\n// https://github.com/epoberezkin/fast-deep-equal/blob/master/index.js\n\n\nfunction _typeof(obj) { if (typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; }; } return _typeof(obj); }\n\nvar isArray = Array.isArray;\nvar keyList = Object.keys;\nvar hasProp = Object.prototype.hasOwnProperty;\n\nmodule.exports = function equal(a, b) {\n  if (a === b) return true;\n\n  if (a && b && _typeof(a) == 'object' && _typeof(b) == 'object') {\n    var arrA = isArray(a),\n        arrB = isArray(b),\n        i,\n        length,\n        key;\n\n    if (arrA && arrB) {\n      length = a.length;\n      if (length != b.length) return false;\n\n      for (i = length; i-- !== 0;) {\n        if (!equal(a[i], b[i])) return false;\n      }\n\n      return true;\n    }\n\n    if (arrA != arrB) return false;\n    var dateA = a instanceof Date,\n        dateB = b instanceof Date;\n    if (dateA != dateB) return false;\n    if (dateA && dateB) return a.getTime() == b.getTime();\n    var regexpA = a instanceof RegExp,\n        regexpB = b instanceof RegExp;\n    if (regexpA != regexpB) return false;\n    if (regexpA && regexpB) return a.toString() == b.toString();\n    var keys = keyList(a);\n    length = keys.length;\n    if (length !== keyList(b).length) return false;\n\n    for (i = length; i-- !== 0;) {\n      if (!hasProp.call(b, keys[i])) return false;\n    }\n\n    for (i = length; i-- !== 0;) {\n      key = keys[i];\n      if (!equal(a[key], b[key])) return false;\n    }\n\n    return true;\n  }\n\n  return a !== a && b !== b;\n};\n\n//# sourceURL=webpack:///./src/DeepEquals.js?");
 
 /***/ }),
-/* 4 */
-/***/ (function(module, exports) {
 
-	"use strict";
-
-	var options = {
-	  debug: false,
-	  updateRate: 15, // How often network components call `sync`
-	  compressSyncPackets: false, // compress network component sync packet json
-	  useLerp: true // when networked entities are created the aframe-lerp-component is attached to the root
-	};
-	module.exports = options;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-	'use strict';
-
-	/* global NAF */
-
-	module.exports.whenEntityLoaded = function (entity, callback) {
-	  if (entity.hasLoaded) {
-	    callback();
-	  }
-	  entity.addEventListener('loaded', function () {
-	    callback();
-	  });
-	};
-
-	module.exports.createHtmlNodeFromString = function (str) {
-	  var div = document.createElement('div');
-	  div.innerHTML = str;
-	  var child = div.firstChild;
-	  return child;
-	};
-
-	module.exports.getNetworkOwner = function (el) {
-	  var components = el.components;
-	  if (components.hasOwnProperty('networked')) {
-	    return components['networked'].data.owner;
-	  }
-	  return null;
-	};
-
-	module.exports.getNetworkId = function (el) {
-	  var components = el.components;
-	  if (components.hasOwnProperty('networked')) {
-	    return components['networked'].data.networkId;
-	  }
-	  return null;
-	};
-
-	module.exports.now = function () {
-	  return Date.now();
-	};
-
-	module.exports.createNetworkId = function () {
-	  return Math.random().toString(36).substring(2, 9);
-	};
-
-	module.exports.delimiter = '---';
-
-	module.exports.childSchemaToKey = function (schema) {
-	  var key = (schema.selector || '') + module.exports.delimiter + (schema.component || '') + module.exports.delimiter + (schema.property || '');
-	  return key;
-	};
-
-	module.exports.keyToChildSchema = function (key) {
-	  var splitKey = key.split(module.exports.delimiter, 3);
-	  return { selector: splitKey[0] || undefined, component: splitKey[1], property: splitKey[2] || undefined };
-	};
-
-	module.exports.isChildSchemaKey = function (key) {
-	  return key.indexOf(module.exports.delimiter) != -1;
-	};
-
-	module.exports.childSchemaEqual = function (a, b) {
-	  return a.selector == b.selector && a.component == b.component && a.property == b.property;
-	};
-
-	/**
-	 * Find the closest ancestor (including the passed in entity) that has a `networked` component
-	 * @param {ANode} entity - Entity to begin the search on
-	 * @returns {Promise<ANode>} An promise that resolves to an entity with a `networked` component
-	 */
-	function getNetworkedEntity(entity) {
-	  return new Promise(function (resolve, reject) {
-	    var curEntity = entity;
-
-	    while (curEntity && !curEntity.hasAttribute("networked")) {
-	      curEntity = curEntity.parentNode;
-	    }
-
-	    if (!curEntity) {
-	      return reject("Entity does not have and is not a child of an entity with the [networked] component ");
-	    }
-
-	    if (curEntity.hasLoaded) {
-	      resolve(curEntity);
-	    } else {
-	      curEntity.addEventListener("instantiated", function () {
-	        resolve(curEntity);
-	      }, { once: true });
-	    }
-	  });
-	}
-
-	module.exports.getNetworkedEntity = getNetworkedEntity;
-
-	module.exports.takeOwnership = function (entity) {
-	  var curEntity = entity;
-
-	  while (curEntity && !curEntity.hasAttribute("networked")) {
-	    curEntity = curEntity.parentNode;
-	  }
-
-	  if (curEntity) {
-	    if (!curEntity.components.networked) {
-	      throw new Error("Entity with [networked] component not initialized.");
-	    }
-
-	    return curEntity.components.networked.takeOwnership();
-	  }
-
-	  throw new Error("takeOwnership() must be called on an entity or child of an entity with the [networked] component.");
-	};
-
-	module.exports.isMine = function (entity) {
-	  var curEntity = entity;
-
-	  while (curEntity && !curEntity.hasAttribute("networked")) {
-	    curEntity = curEntity.parentNode;
-	  }
-
-	  if (curEntity) {
-	    if (!curEntity.components.networked) {
-	      throw new Error("Entity with [networked] component not initialized.");
-	    }
-
-	    return curEntity.components.networked.data.owner === NAF.clientId;
-	  }
-
-	  throw new Error("isMine() must be called on an entity or child of an entity with the [networked] component.");
-	};
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-	"use strict";
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/*eslint no-console: "off" */
-
-	var NafLogger = function () {
-	  function NafLogger() {
-	    _classCallCheck(this, NafLogger);
-
-	    this.debug = false;
-	  }
-
-	  _createClass(NafLogger, [{
-	    key: "setDebug",
-	    value: function setDebug(debug) {
-	      this.debug = debug;
-	    }
-	  }, {
-	    key: "write",
-	    value: function write() {
-	      if (this.debug) {
-	        console.log.apply(this, arguments);
-	      }
-	    }
-	  }, {
-	    key: "warn",
-	    value: function warn() {
-	      console.warn.apply(this, arguments);
-	    }
-	  }, {
-	    key: "error",
-	    value: function error() {
-	      console.error.apply(this, arguments);
-	    }
-	  }]);
-
-	  return NafLogger;
-	}();
-
-	module.exports = NafLogger;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* global NAF */
-
-	var Schemas = function () {
-	  function Schemas() {
-	    _classCallCheck(this, Schemas);
-
-	    this.schemaDict = {};
-	    this.templateCache = {};
-	  }
-
-	  _createClass(Schemas, [{
-	    key: 'createDefaultSchema',
-	    value: function createDefaultSchema(name) {
-	      return {
-	        template: name,
-	        components: ['position', 'rotation']
-	      };
-	    }
-	  }, {
-	    key: 'add',
-	    value: function add(schema) {
-	      if (this.validateSchema(schema)) {
-	        this.schemaDict[schema.template] = schema;
-	        var templateEl = document.querySelector(schema.template);
-	        if (!templateEl) {
-	          NAF.log.error('Template el not found for ' + schema.template + ', make sure NAF.schemas.add is called after <a-scene> is defined.');
-	          return;
-	        }
-	        if (!this.validateTemplate(schema, templateEl)) {
-	          return;
-	        }
-	        this.templateCache[schema.template] = document.importNode(templateEl.content, true);
-	      } else {
-	        NAF.log.error('Schema not valid: ', schema);
-	        NAF.log.error('See https://github.com/haydenjameslee/networked-aframe#syncing-custom-components');
-	      }
-	    }
-	  }, {
-	    key: 'getCachedTemplate',
-	    value: function getCachedTemplate(template) {
-	      if (!this.templateIsCached(template)) {
-	        if (this.templateExistsInScene(template)) {
-	          this.add(this.createDefaultSchema(template));
-	        } else {
-	          NAF.log.error('Template el for ' + template + ' is not in the scene, add the template to <a-assets> and register with NAF.schemas.add.');
-	        }
-	      }
-	      return this.templateCache[template].firstElementChild.cloneNode(true);
-	    }
-	  }, {
-	    key: 'templateIsCached',
-	    value: function templateIsCached(template) {
-	      return this.templateCache.hasOwnProperty(template);
-	    }
-	  }, {
-	    key: 'getComponents',
-	    value: function getComponents(template) {
-	      var components = ['position', 'rotation'];
-	      if (this.hasTemplate(template)) {
-	        components = this.schemaDict[template].components;
-	      }
-	      return components;
-	    }
-	  }, {
-	    key: 'hasTemplate',
-	    value: function hasTemplate(template) {
-	      return this.schemaDict.hasOwnProperty(template);
-	    }
-	  }, {
-	    key: 'templateExistsInScene',
-	    value: function templateExistsInScene(templateSelector) {
-	      var el = document.querySelector(templateSelector);
-	      return el && this.isTemplateTag(el);
-	    }
-	  }, {
-	    key: 'validateSchema',
-	    value: function validateSchema(schema) {
-	      return schema.hasOwnProperty('template') && schema.hasOwnProperty('components');
-	    }
-	  }, {
-	    key: 'validateTemplate',
-	    value: function validateTemplate(schema, el) {
-	      if (!this.isTemplateTag(el)) {
-	        NAF.log.error('Template for ' + schema.template + ' is not a <template> tag. Instead found: ' + el.tagName);
-	        return false;
-	      } else if (!this.templateHasOneOrZeroChildren(el)) {
-	        NAF.log.error('Template for ' + schema.template + ' has more than one child. Templates must have one direct child element, no more. Template found:', el);
-	        return false;
-	      } else {
-	        return true;
-	      }
-	    }
-	  }, {
-	    key: 'isTemplateTag',
-	    value: function isTemplateTag(el) {
-	      return el.tagName.toLowerCase() === 'template';
-	    }
-	  }, {
-	    key: 'templateHasOneOrZeroChildren',
-	    value: function templateHasOneOrZeroChildren(el) {
-	      return el.content.childElementCount < 2;
-	    }
-	  }, {
-	    key: 'remove',
-	    value: function remove(template) {
-	      delete this.schemaDict[template];
-	    }
-	  }, {
-	    key: 'clear',
-	    value: function clear() {
-	      this.schemaDict = {};
-	    }
-	  }]);
-
-	  return Schemas;
-	}();
-
-	module.exports = Schemas;
-
-/***/ }),
-/* 8 */
+/***/ "./src/NafIndex.js":
+/*!*************************!*\
+  !*** ./src/NafIndex.js ***!
+  \*************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* global NAF */
-	var ChildEntityCache = __webpack_require__(9);
-
-	var NetworkEntities = function () {
-	  function NetworkEntities() {
-	    _classCallCheck(this, NetworkEntities);
-
-	    this.entities = {};
-	    this.childCache = new ChildEntityCache();
-
-	    this.onRemoteEntityCreatedEvent = new Event('remoteEntityCreated');
-	  }
-
-	  _createClass(NetworkEntities, [{
-	    key: 'registerEntity',
-	    value: function registerEntity(networkId, entity) {
-	      this.entities[networkId] = entity;
-	    }
-	  }, {
-	    key: 'createRemoteEntity',
-	    value: function createRemoteEntity(entityData) {
-	      NAF.log.write('Creating remote entity', entityData);
-
-	      var networkId = entityData.networkId;
-	      var el = NAF.schemas.getCachedTemplate(entityData.template);
-
-	      el.setAttribute('id', 'naf-' + networkId);
-
-	      this.initPosition(el, entityData.components);
-	      this.initRotation(el, entityData.components);
-	      this.addNetworkComponent(el, entityData);
-
-	      this.registerEntity(networkId, el);
-
-	      return el;
-	    }
-	  }, {
-	    key: 'initPosition',
-	    value: function initPosition(entity, componentData) {
-	      var hasPosition = componentData.hasOwnProperty('position');
-	      if (hasPosition) {
-	        var position = componentData.position;
-	        entity.setAttribute('position', position);
-	      }
-	    }
-	  }, {
-	    key: 'initRotation',
-	    value: function initRotation(entity, componentData) {
-	      var hasRotation = componentData.hasOwnProperty('rotation');
-	      if (hasRotation) {
-	        var rotation = componentData.rotation;
-	        entity.setAttribute('rotation', rotation);
-	      }
-	    }
-	  }, {
-	    key: 'addNetworkComponent',
-	    value: function addNetworkComponent(entity, entityData) {
-	      var networkData = {
-	        template: entityData.template,
-	        owner: entityData.owner,
-	        networkId: entityData.networkId
-	      };
-
-	      entity.setAttribute('networked', networkData);
-	      entity.firstUpdateData = entityData;
-	    }
-	  }, {
-	    key: 'updateEntity',
-	    value: function updateEntity(client, dataType, entityData) {
-	      var isCompressed = entityData[0] == 1;
-	      var networkId = isCompressed ? entityData[1] : entityData.networkId;
-
-	      if (this.hasEntity(networkId)) {
-	        this.entities[networkId].emit('networkUpdate', { entityData: entityData }, false);
-	      } else if (!isCompressed && this.isFullSync(entityData)) {
-	        this.receiveFirstUpdateFromEntity(entityData);
-	      }
-	    }
-	  }, {
-	    key: 'isFullSync',
-	    value: function isFullSync(entityData) {
-	      var numSentComps = Object.keys(entityData.components).length;
-	      var numTemplateComps = NAF.schemas.getComponents(entityData.template).length;
-	      return numSentComps === numTemplateComps;
-	    }
-	  }, {
-	    key: 'receiveFirstUpdateFromEntity',
-	    value: function receiveFirstUpdateFromEntity(entityData) {
-	      var parent = entityData.parent;
-	      var networkId = entityData.networkId;
-
-	      var parentNotCreatedYet = parent && !this.hasEntity(parent);
-	      if (parentNotCreatedYet) {
-	        this.childCache.addChild(parent, entityData);
-	      } else {
-	        var remoteEntity = this.createRemoteEntity(entityData);
-	        this.createAndAppendChildren(networkId, remoteEntity);
-	        this.addEntityToPage(remoteEntity, parent);
-	      }
-	    }
-	  }, {
-	    key: 'createAndAppendChildren',
-	    value: function createAndAppendChildren(parentId, parentEntity) {
-	      var children = this.childCache.getChildren(parentId);
-	      for (var i = 0; i < children.length; i++) {
-	        var childEntityData = children[i];
-	        var childId = childEntityData.networkId;
-	        if (this.hasEntity(childId)) {
-	          NAF.log.warn('Tried to instantiate entity multiple times', childId, childEntityData, 'Existing entity:', this.getEntity(childId));
-	          continue;
-	        }
-	        var childEntity = this.createRemoteEntity(childEntityData);
-	        this.createAndAppendChildren(childId, childEntity);
-	        parentEntity.appendChild(childEntity);
-	      }
-	    }
-	  }, {
-	    key: 'addEntityToPage',
-	    value: function addEntityToPage(entity, parentId) {
-	      if (this.hasEntity(parentId)) {
-	        this.addEntityToParent(entity, parentId);
-	      } else {
-	        this.addEntityToSceneRoot(entity);
-	      }
-	    }
-	  }, {
-	    key: 'addEntityToParent',
-	    value: function addEntityToParent(entity, parentId) {
-	      var parentEl = document.getElementById('naf-' + parentId);
-	      parentEl.appendChild(entity);
-	    }
-	  }, {
-	    key: 'addEntityToSceneRoot',
-	    value: function addEntityToSceneRoot(el) {
-	      var scene = document.querySelector('a-scene');
-	      scene.appendChild(el);
-	    }
-	  }, {
-	    key: 'completeSync',
-	    value: function completeSync(targetClientId) {
-	      for (var id in this.entities) {
-	        if (this.entities.hasOwnProperty(id)) {
-	          this.entities[id].emit('syncAll', { targetClientId: targetClientId }, false);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'removeRemoteEntity',
-	    value: function removeRemoteEntity(toClient, dataType, data) {
-	      var id = data.networkId;
-	      return this.removeEntity(id);
-	    }
-	  }, {
-	    key: 'removeEntitiesOfClient',
-	    value: function removeEntitiesOfClient(clientId) {
-	      var entityList = [];
-	      for (var id in this.entities) {
-	        var entityOwner = NAF.utils.getNetworkOwner(this.entities[id]);
-	        if (entityOwner == clientId) {
-	          var entity = this.removeEntity(id);
-	          entityList.push(entity);
-	        }
-	      }
-	      return entityList;
-	    }
-	  }, {
-	    key: 'removeEntity',
-	    value: function removeEntity(id) {
-	      if (this.hasEntity(id)) {
-	        var entity = this.entities[id];
-	        delete this.entities[id];
-	        entity.parentNode.removeChild(entity);
-	        return entity;
-	      } else {
-	        return null;
-	      }
-	    }
-	  }, {
-	    key: 'getEntity',
-	    value: function getEntity(id) {
-	      if (this.entities.hasOwnProperty(id)) {
-	        return this.entities[id];
-	      }
-	      return null;
-	    }
-	  }, {
-	    key: 'hasEntity',
-	    value: function hasEntity(id) {
-	      return this.entities.hasOwnProperty(id);
-	    }
-	  }, {
-	    key: 'removeRemoteEntities',
-	    value: function removeRemoteEntities() {
-	      this.childCache = new ChildEntityCache();
-
-	      for (var id in this.entities) {
-	        var owner = this.entities[id].getAttribute('networked').owner;
-	        if (owner != NAF.clientId) {
-	          this.removeEntity(id);
-	        }
-	      }
-	    }
-	  }]);
-
-	  return NetworkEntities;
-	}();
-
-	module.exports = NetworkEntities;
+"use strict";
+eval("\n\nvar options = __webpack_require__(/*! ./options */ \"./src/options.js\");\n\nvar utils = __webpack_require__(/*! ./utils */ \"./src/utils.js\");\n\nvar NafLogger = __webpack_require__(/*! ./NafLogger */ \"./src/NafLogger.js\");\n\nvar Schemas = __webpack_require__(/*! ./Schemas */ \"./src/Schemas.js\");\n\nvar NetworkEntities = __webpack_require__(/*! ./NetworkEntities */ \"./src/NetworkEntities.js\");\n\nvar NetworkConnection = __webpack_require__(/*! ./NetworkConnection */ \"./src/NetworkConnection.js\");\n\nvar AdapterFactory = __webpack_require__(/*! ./adapters/AdapterFactory */ \"./src/adapters/AdapterFactory.js\");\n\nvar naf = {};\nnaf.app = '';\nnaf.room = '';\nnaf.clientId = '';\nnaf.options = options;\nnaf.utils = utils;\nnaf.log = new NafLogger();\nnaf.schemas = new Schemas();\nnaf.version = \"0.6.1\";\nnaf.adapters = new AdapterFactory();\nvar entities = new NetworkEntities();\nvar connection = new NetworkConnection(entities);\nnaf.connection = connection;\nnaf.entities = entities;\nmodule.exports = window.NAF = naf;\n\n//# sourceURL=webpack:///./src/NafIndex.js?");
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports) {
 
-	"use strict";
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var ChildEntityCache = function () {
-	  function ChildEntityCache() {
-	    _classCallCheck(this, ChildEntityCache);
-
-	    this.dict = {};
-	  }
-
-	  _createClass(ChildEntityCache, [{
-	    key: "addChild",
-	    value: function addChild(parentNetworkId, childData) {
-	      if (!this.hasParent(parentNetworkId)) {
-	        this.dict[parentNetworkId] = [];
-	      }
-	      this.dict[parentNetworkId].push(childData);
-	    }
-	  }, {
-	    key: "getChildren",
-	    value: function getChildren(parentNetworkId) {
-	      if (!this.hasParent(parentNetworkId)) {
-	        return [];
-	      }
-	      var children = this.dict[parentNetworkId];
-	      delete this.dict[parentNetworkId];
-	      return children;
-	    }
-
-	    /* Private */
-
-	  }, {
-	    key: "hasParent",
-	    value: function hasParent(parentId) {
-	      return this.dict.hasOwnProperty(parentId);
-	    }
-	  }]);
-
-	  return ChildEntityCache;
-	}();
-
-	module.exports = ChildEntityCache;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* global NAF */
-	var ReservedDataType = { Update: 'u', Remove: 'r' };
-
-	var NetworkConnection = function () {
-	  function NetworkConnection(networkEntities) {
-	    _classCallCheck(this, NetworkConnection);
-
-	    this.entities = networkEntities;
-	    this.setupDefaultDataSubscriptions();
-
-	    this.connectedClients = {};
-	    this.activeDataChannels = {};
-	  }
-
-	  _createClass(NetworkConnection, [{
-	    key: 'setNetworkAdapter',
-	    value: function setNetworkAdapter(adapter) {
-	      this.adapter = adapter;
-	    }
-	  }, {
-	    key: 'setupDefaultDataSubscriptions',
-	    value: function setupDefaultDataSubscriptions() {
-	      this.dataChannelSubs = {};
-
-	      this.dataChannelSubs[ReservedDataType.Update] = this.entities.updateEntity.bind(this.entities);
-
-	      this.dataChannelSubs[ReservedDataType.Remove] = this.entities.removeRemoteEntity.bind(this.entities);
-	    }
-	  }, {
-	    key: 'connect',
-	    value: function connect(serverUrl, appName, roomName) {
-	      var enableAudio = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-
-	      NAF.app = appName;
-	      NAF.room = roomName;
-
-	      this.adapter.setServerUrl(serverUrl);
-	      this.adapter.setApp(appName);
-	      this.adapter.setRoom(roomName);
-
-	      var webrtcOptions = {
-	        audio: enableAudio,
-	        video: false,
-	        datachannel: true
-	      };
-	      this.adapter.setWebRtcOptions(webrtcOptions);
-
-	      this.adapter.setServerConnectListeners(this.connectSuccess.bind(this), this.connectFailure.bind(this));
-	      this.adapter.setDataChannelListeners(this.dataChannelOpen.bind(this), this.dataChannelClosed.bind(this), this.receivedData.bind(this));
-	      this.adapter.setRoomOccupantListener(this.occupantsReceived.bind(this));
-
-	      return this.adapter.connect();
-	    }
-	  }, {
-	    key: 'onConnect',
-	    value: function onConnect(callback) {
-	      this.onConnectCallback = callback;
-
-	      if (this.isConnected()) {
-	        callback();
-	      } else {
-	        document.body.addEventListener('connected', callback, false);
-	      }
-	    }
-	  }, {
-	    key: 'connectSuccess',
-	    value: function connectSuccess(clientId) {
-	      NAF.log.write('Networked-Aframe Client ID:', clientId);
-	      NAF.clientId = clientId;
-
-	      var evt = new CustomEvent('connected', { 'detail': { clientId: clientId } });
-	      document.body.dispatchEvent(evt);
-	    }
-	  }, {
-	    key: 'connectFailure',
-	    value: function connectFailure(errorCode, message) {
-	      NAF.log.error(errorCode, "failure to connect");
-	    }
-	  }, {
-	    key: 'occupantsReceived',
-	    value: function occupantsReceived(occupantList) {
-	      var prevConnectedClients = Object.assign({}, this.connectedClients);
-	      this.connectedClients = occupantList;
-	      this.checkForDisconnectingClients(prevConnectedClients, occupantList);
-	      this.checkForConnectingClients(occupantList);
-	    }
-	  }, {
-	    key: 'checkForDisconnectingClients',
-	    value: function checkForDisconnectingClients(oldOccupantList, newOccupantList) {
-	      for (var id in oldOccupantList) {
-	        var clientFound = newOccupantList.hasOwnProperty(id);
-	        if (!clientFound) {
-	          NAF.log.write('Closing stream to ', id);
-	          this.adapter.closeStreamConnection(id);
-	        }
-	      }
-	    }
-
-	    // Some adapters will handle this internally
-
-	  }, {
-	    key: 'checkForConnectingClients',
-	    value: function checkForConnectingClients(occupantList) {
-	      for (var id in occupantList) {
-	        var startConnection = this.isNewClient(id) && this.adapter.shouldStartConnectionTo(occupantList[id]);
-	        if (startConnection) {
-	          NAF.log.write('Opening datachannel to ', id);
-	          this.adapter.startStreamConnection(id);
-	        }
-	      }
-	    }
-	  }, {
-	    key: 'getConnectedClients',
-	    value: function getConnectedClients() {
-	      return this.connectedClients;
-	    }
-	  }, {
-	    key: 'isConnected',
-	    value: function isConnected() {
-	      return !!NAF.clientId;
-	    }
-	  }, {
-	    key: 'isMineAndConnected',
-	    value: function isMineAndConnected(clientId) {
-	      return this.isConnected() && NAF.clientId === clientId;
-	    }
-	  }, {
-	    key: 'isNewClient',
-	    value: function isNewClient(clientId) {
-	      return !this.isConnectedTo(clientId);
-	    }
-	  }, {
-	    key: 'isConnectedTo',
-	    value: function isConnectedTo(clientId) {
-	      return this.adapter.getConnectStatus(clientId) === NAF.adapters.IS_CONNECTED;
-	    }
-	  }, {
-	    key: 'dataChannelOpen',
-	    value: function dataChannelOpen(clientId) {
-	      NAF.log.write('Opened data channel from ' + clientId);
-	      this.activeDataChannels[clientId] = true;
-	      this.entities.completeSync(clientId);
-
-	      var evt = new CustomEvent('clientConnected', { detail: { clientId: clientId } });
-	      document.body.dispatchEvent(evt);
-	    }
-	  }, {
-	    key: 'dataChannelClosed',
-	    value: function dataChannelClosed(clientId) {
-	      NAF.log.write('Closed data channel from ' + clientId);
-	      this.activeDataChannels[clientId] = false;
-	      this.entities.removeEntitiesOfClient(clientId);
-
-	      var evt = new CustomEvent('clientDisconnected', { detail: { clientId: clientId } });
-	      document.body.dispatchEvent(evt);
-	    }
-	  }, {
-	    key: 'hasActiveDataChannel',
-	    value: function hasActiveDataChannel(clientId) {
-	      return this.activeDataChannels.hasOwnProperty(clientId) && this.activeDataChannels[clientId];
-	    }
-	  }, {
-	    key: 'broadcastData',
-	    value: function broadcastData(dataType, data) {
-	      this.adapter.broadcastData(dataType, data);
-	    }
-	  }, {
-	    key: 'broadcastDataGuaranteed',
-	    value: function broadcastDataGuaranteed(dataType, data) {
-	      this.adapter.broadcastDataGuaranteed(dataType, data);
-	    }
-	  }, {
-	    key: 'sendData',
-	    value: function sendData(toClientId, dataType, data, guaranteed) {
-	      if (this.hasActiveDataChannel(toClientId)) {
-	        if (guaranteed) {
-	          this.adapter.sendDataGuaranteed(toClientId, dataType, data);
-	        } else {
-	          this.adapter.sendData(toClientId, dataType, data);
-	        }
-	      } else {
-	        // console.error("NOT-CONNECTED", "not connected to " + toClient);
-	      }
-	    }
-	  }, {
-	    key: 'sendDataGuaranteed',
-	    value: function sendDataGuaranteed(toClientId, dataType, data) {
-	      this.sendData(toClientId, dataType, data, true);
-	    }
-	  }, {
-	    key: 'subscribeToDataChannel',
-	    value: function subscribeToDataChannel(dataType, callback) {
-	      if (this.isReservedDataType(dataType)) {
-	        NAF.log.error('NetworkConnection@subscribeToDataChannel: ' + dataType + ' is a reserved dataType. Choose another');
-	        return;
-	      }
-	      this.dataChannelSubs[dataType] = callback;
-	    }
-	  }, {
-	    key: 'unsubscribeToDataChannel',
-	    value: function unsubscribeToDataChannel(dataType) {
-	      if (this.isReservedDataType(dataType)) {
-	        NAF.log.error('NetworkConnection@unsubscribeToDataChannel: ' + dataType + ' is a reserved dataType. Choose another');
-	        return;
-	      }
-	      delete this.dataChannelSubs[dataType];
-	    }
-	  }, {
-	    key: 'isReservedDataType',
-	    value: function isReservedDataType(dataType) {
-	      return dataType == ReservedDataType.Update || dataType == ReservedDataType.Remove;
-	    }
-	  }, {
-	    key: 'receivedData',
-	    value: function receivedData(fromClientId, dataType, data) {
-	      if (this.dataChannelSubs.hasOwnProperty(dataType)) {
-	        this.dataChannelSubs[dataType](fromClientId, dataType, data);
-	      } else {
-	        NAF.log.error('NetworkConnection@receivedData: ' + dataType + ' has not been subscribed to yet. Call subscribeToDataChannel()');
-	      }
-	    }
-	  }, {
-	    key: 'getServerTime',
-	    value: function getServerTime() {
-	      return this.adapter.getServerTime();
-	    }
-	  }, {
-	    key: 'disconnect',
-	    value: function disconnect() {
-	      this.entities.removeRemoteEntities();
-	      this.adapter.disconnect();
-
-	      NAF.app = '';
-	      NAF.room = '';
-	      NAF.clientId = '';
-	      this.connectedClients = {};
-	      this.activeDataChannels = {};
-	      this.adapter = null;
-
-	      this.setupDefaultDataSubscriptions();
-
-	      document.body.removeEventListener('connected', this.onConnectCallback);
-	    }
-	  }]);
-
-	  return NetworkConnection;
-	}();
-
-	module.exports = NetworkConnection;
-
-/***/ }),
-/* 11 */
+/***/ "./src/NafLogger.js":
+/*!**************************!*\
+  !*** ./src/NafLogger.js ***!
+  \**************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var WsEasyRtcAdapter = __webpack_require__(12);
-	var EasyRtcAdapter = __webpack_require__(15);
-
-	var AdapterFactory = function () {
-	  function AdapterFactory() {
-	    _classCallCheck(this, AdapterFactory);
-
-	    this.adapters = {
-	      "wseasyrtc": WsEasyRtcAdapter,
-	      "easyrtc": EasyRtcAdapter
-	    };
-
-	    this.IS_CONNECTED = AdapterFactory.IS_CONNECTED;
-	    this.CONNECTING = AdapterFactory.CONNECTING;
-	    this.NOT_CONNECTED = AdapterFactory.NOT_CONNECTED;
-	  }
-
-	  _createClass(AdapterFactory, [{
-	    key: "register",
-	    value: function register(adapterName, AdapterClass) {
-	      this.adapters[adapterName] = AdapterClass;
-	    }
-	  }, {
-	    key: "make",
-	    value: function make(adapterName) {
-	      var name = adapterName.toLowerCase();
-	      if (this.adapters[name]) {
-	        var AdapterClass = this.adapters[name];
-	        return new AdapterClass();
-	      } else {
-	        throw new Error("Adapter: " + adapterName + " not registered. Please use NAF.adapters.register() to register this adapter.");
-	      }
-	    }
-	  }]);
-
-	  return AdapterFactory;
-	}();
-
-	AdapterFactory.IS_CONNECTED = "IS_CONNECTED";
-	AdapterFactory.CONNECTING = "CONNECTING";
-	AdapterFactory.NOT_CONNECTED = "NOT_CONNECTED";
-
-	module.exports = AdapterFactory;
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\n/*eslint no-console: \"off\" */\nvar NafLogger =\n/*#__PURE__*/\nfunction () {\n  function NafLogger() {\n    _classCallCheck(this, NafLogger);\n\n    this.debug = false;\n  }\n\n  _createClass(NafLogger, [{\n    key: \"setDebug\",\n    value: function setDebug(debug) {\n      this.debug = debug;\n    }\n  }, {\n    key: \"write\",\n    value: function write() {\n      if (this.debug) {\n        console.log.apply(this, arguments);\n      }\n    }\n  }, {\n    key: \"warn\",\n    value: function warn() {\n      console.warn.apply(this, arguments);\n    }\n  }, {\n    key: \"error\",\n    value: function error() {\n      console.error.apply(this, arguments);\n    }\n  }]);\n\n  return NafLogger;\n}();\n\nmodule.exports = NafLogger;\n\n//# sourceURL=webpack:///./src/NafLogger.js?");
 
 /***/ }),
-/* 12 */
+
+/***/ "./src/NetworkConnection.js":
+/*!**********************************!*\
+  !*** ./src/NetworkConnection.js ***!
+  \**********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	/* global NAF */
-	var NoOpAdapter = __webpack_require__(13);
-
-	var WsEasyRtcInterface = function (_NoOpAdapter) {
-	  _inherits(WsEasyRtcInterface, _NoOpAdapter);
-
-	  function WsEasyRtcInterface(easyrtc) {
-	    _classCallCheck(this, WsEasyRtcInterface);
-
-	    var _this = _possibleConstructorReturn(this, (WsEasyRtcInterface.__proto__ || Object.getPrototypeOf(WsEasyRtcInterface)).call(this));
-
-	    _this.easyrtc = easyrtc || window.easyrtc;
-	    _this.app = 'default';
-	    _this.room = 'default';
-
-	    _this.connectedClients = [];
-
-	    _this.serverTimeRequests = 0;
-	    _this.timeOffsets = [];
-	    _this.avgTimeOffset = 0;
-	    return _this;
-	  }
-
-	  _createClass(WsEasyRtcInterface, [{
-	    key: 'setServerUrl',
-	    value: function setServerUrl(url) {
-	      this.serverUrl = url;
-	      this.easyrtc.setSocketUrl(url);
-	    }
-	  }, {
-	    key: 'setApp',
-	    value: function setApp(appName) {
-	      this.app = appName;
-	    }
-	  }, {
-	    key: 'setRoom',
-	    value: function setRoom(roomName) {
-	      this.room = roomName;
-	      this.easyrtc.joinRoom(roomName, null);
-	    }
-	  }, {
-	    key: 'setWebRtcOptions',
-	    value: function setWebRtcOptions(options) {
-	      // No webrtc support
-	    }
-	  }, {
-	    key: 'setServerConnectListeners',
-	    value: function setServerConnectListeners(successListener, failureListener) {
-	      this.connectSuccess = successListener;
-	      this.connectFailure = failureListener;
-	    }
-	  }, {
-	    key: 'setRoomOccupantListener',
-	    value: function setRoomOccupantListener(occupantListener) {
-	      this.easyrtc.setRoomOccupantListener(function (roomName, occupants, primary) {
-	        occupantListener(occupants);
-	      });
-	    }
-	  }, {
-	    key: 'setDataChannelListeners',
-	    value: function setDataChannelListeners(openListener, closedListener, messageListener) {
-	      this.openListener = openListener;
-	      this.closedListener = closedListener;
-	      this.easyrtc.setPeerListener(messageListener);
-	    }
-	  }, {
-	    key: 'updateTimeOffset',
-	    value: function updateTimeOffset() {
-	      var _this2 = this;
-
-	      var clientSentTime = Date.now() + this.avgTimeOffset;
-
-	      return fetch(document.location.href, { method: "HEAD", cache: "no-cache" }).then(function (res) {
-	        var precision = 1000;
-	        var serverReceivedTime = new Date(res.headers.get("Date")).getTime() + precision / 2;
-	        var clientReceivedTime = Date.now();
-	        var serverTime = serverReceivedTime + (clientReceivedTime - clientSentTime) / 2;
-	        var timeOffset = serverTime - clientReceivedTime;
-
-	        _this2.serverTimeRequests++;
-
-	        if (_this2.serverTimeRequests <= 10) {
-	          _this2.timeOffsets.push(timeOffset);
-	        } else {
-	          _this2.timeOffsets[_this2.serverTimeRequests % 10] = timeOffset;
-	        }
-
-	        _this2.avgTimeOffset = _this2.timeOffsets.reduce(function (acc, offset) {
-	          return acc += offset;
-	        }, 0) / _this2.timeOffsets.length;
-
-	        if (_this2.serverTimeRequests > 10) {
-	          setTimeout(function () {
-	            return _this2.updateTimeOffset();
-	          }, 5 * 60 * 1000); // Sync clock every 5 minutes.
-	        } else {
-	          _this2.updateTimeOffset();
-	        }
-	      });
-	    }
-	  }, {
-	    key: 'connect',
-	    value: function connect() {
-	      var _this3 = this;
-
-	      Promise.all([this.updateTimeOffset(), new Promise(function (resolve, reject) {
-	        _this3.easyrtc.connect(_this3.app, resolve, reject);
-	      })]).then(function (_ref) {
-	        var _ref2 = _slicedToArray(_ref, 2),
-	            _ = _ref2[0],
-	            clientId = _ref2[1];
-
-	        _this3.connectSuccess(clientId);
-	      }).catch(this.connectFailure);
-	    }
-	  }, {
-	    key: 'shouldStartConnectionTo',
-	    value: function shouldStartConnectionTo(clientId) {
-	      return true;
-	    }
-	  }, {
-	    key: 'startStreamConnection',
-	    value: function startStreamConnection(clientId) {
-	      this.connectedClients.push(clientId);
-	      this.openListener(clientId);
-	    }
-	  }, {
-	    key: 'closeStreamConnection',
-	    value: function closeStreamConnection(clientId) {
-	      var index = this.connectedClients.indexOf(clientId);
-	      if (index > -1) {
-	        this.connectedClients.splice(index, 1);
-	      }
-	      this.closedListener(clientId);
-	    }
-	  }, {
-	    key: 'sendData',
-	    value: function sendData(clientId, dataType, data) {
-	      this.easyrtc.sendDataWS(clientId, dataType, data);
-	    }
-	  }, {
-	    key: 'sendDataGuaranteed',
-	    value: function sendDataGuaranteed(clientId, dataType, data) {
-	      this.sendData(clientId, dataType, data);
-	    }
-	  }, {
-	    key: 'broadcastData',
-	    value: function broadcastData(dataType, data) {
-	      var destination = { targetRoom: this.room };
-	      this.easyrtc.sendDataWS(destination, dataType, data);
-	    }
-	  }, {
-	    key: 'broadcastDataGuaranteed',
-	    value: function broadcastDataGuaranteed(dataType, data) {
-	      this.broadcastData(dataType, data);
-	    }
-	  }, {
-	    key: 'getConnectStatus',
-	    value: function getConnectStatus(clientId) {
-	      var connected = this.connectedClients.indexOf(clientId) != -1;
-
-	      if (connected) {
-	        return NAF.adapters.IS_CONNECTED;
-	      } else {
-	        return NAF.adapters.NOT_CONNECTED;
-	      }
-	    }
-	  }, {
-	    key: 'getServerTime',
-	    value: function getServerTime() {
-	      return Date.now() + this.avgTimeOffset;
-	    }
-	  }, {
-	    key: 'disconnect',
-	    value: function disconnect() {
-	      this.easyrtc.disconnect();
-	    }
-	  }]);
-
-	  return WsEasyRtcInterface;
-	}(NoOpAdapter);
-
-	module.exports = WsEasyRtcInterface;
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\n/* global NAF */\nvar ReservedDataType = {\n  Update: 'u',\n  UpdateMulti: 'um',\n  Remove: 'r'\n};\n\nvar NetworkConnection =\n/*#__PURE__*/\nfunction () {\n  function NetworkConnection(networkEntities) {\n    _classCallCheck(this, NetworkConnection);\n\n    this.entities = networkEntities;\n    this.setupDefaultDataSubscriptions();\n    this.connectedClients = {};\n    this.activeDataChannels = {};\n  }\n\n  _createClass(NetworkConnection, [{\n    key: \"setNetworkAdapter\",\n    value: function setNetworkAdapter(adapter) {\n      this.adapter = adapter;\n    }\n  }, {\n    key: \"setupDefaultDataSubscriptions\",\n    value: function setupDefaultDataSubscriptions() {\n      this.dataChannelSubs = {};\n      this.dataChannelSubs[ReservedDataType.Update] = this.entities.updateEntity.bind(this.entities);\n      this.dataChannelSubs[ReservedDataType.UpdateMulti] = this.entities.updateEntityMulti.bind(this.entities);\n      this.dataChannelSubs[ReservedDataType.Remove] = this.entities.removeRemoteEntity.bind(this.entities);\n    }\n  }, {\n    key: \"connect\",\n    value: function connect(serverUrl, appName, roomName) {\n      var enableAudio = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;\n      NAF.app = appName;\n      NAF.room = roomName;\n      this.adapter.setServerUrl(serverUrl);\n      this.adapter.setApp(appName);\n      this.adapter.setRoom(roomName);\n      var webrtcOptions = {\n        audio: enableAudio,\n        video: false,\n        datachannel: true\n      };\n      this.adapter.setWebRtcOptions(webrtcOptions);\n      this.adapter.setServerConnectListeners(this.connectSuccess.bind(this), this.connectFailure.bind(this));\n      this.adapter.setDataChannelListeners(this.dataChannelOpen.bind(this), this.dataChannelClosed.bind(this), this.receivedData.bind(this));\n      this.adapter.setRoomOccupantListener(this.occupantsReceived.bind(this));\n      return this.adapter.connect();\n    }\n  }, {\n    key: \"onConnect\",\n    value: function onConnect(callback) {\n      this.onConnectCallback = callback;\n\n      if (this.isConnected()) {\n        callback();\n      } else {\n        document.body.addEventListener('connected', callback, false);\n      }\n    }\n  }, {\n    key: \"connectSuccess\",\n    value: function connectSuccess(clientId) {\n      NAF.log.write('Networked-Aframe Client ID:', clientId);\n      NAF.clientId = clientId;\n      var evt = new CustomEvent('connected', {\n        'detail': {\n          clientId: clientId\n        }\n      });\n      document.body.dispatchEvent(evt);\n    }\n  }, {\n    key: \"connectFailure\",\n    value: function connectFailure(errorCode, message) {\n      NAF.log.error(errorCode, \"failure to connect\");\n    }\n  }, {\n    key: \"occupantsReceived\",\n    value: function occupantsReceived(occupantList) {\n      var prevConnectedClients = Object.assign({}, this.connectedClients);\n      this.connectedClients = occupantList;\n      this.checkForDisconnectingClients(prevConnectedClients, occupantList);\n      this.checkForConnectingClients(occupantList);\n    }\n  }, {\n    key: \"checkForDisconnectingClients\",\n    value: function checkForDisconnectingClients(oldOccupantList, newOccupantList) {\n      for (var id in oldOccupantList) {\n        var clientFound = newOccupantList[id];\n\n        if (!clientFound) {\n          NAF.log.write('Closing stream to ', id);\n          this.adapter.closeStreamConnection(id);\n        }\n      }\n    } // Some adapters will handle this internally\n\n  }, {\n    key: \"checkForConnectingClients\",\n    value: function checkForConnectingClients(occupantList) {\n      for (var id in occupantList) {\n        var startConnection = this.isNewClient(id) && this.adapter.shouldStartConnectionTo(occupantList[id]);\n\n        if (startConnection) {\n          NAF.log.write('Opening datachannel to ', id);\n          this.adapter.startStreamConnection(id);\n        }\n      }\n    }\n  }, {\n    key: \"getConnectedClients\",\n    value: function getConnectedClients() {\n      return this.connectedClients;\n    }\n  }, {\n    key: \"isConnected\",\n    value: function isConnected() {\n      return !!NAF.clientId;\n    }\n  }, {\n    key: \"isMineAndConnected\",\n    value: function isMineAndConnected(clientId) {\n      return this.isConnected() && NAF.clientId === clientId;\n    }\n  }, {\n    key: \"isNewClient\",\n    value: function isNewClient(clientId) {\n      return !this.isConnectedTo(clientId);\n    }\n  }, {\n    key: \"isConnectedTo\",\n    value: function isConnectedTo(clientId) {\n      return this.adapter.getConnectStatus(clientId) === NAF.adapters.IS_CONNECTED;\n    }\n  }, {\n    key: \"dataChannelOpen\",\n    value: function dataChannelOpen(clientId) {\n      NAF.log.write('Opened data channel from ' + clientId);\n      this.activeDataChannels[clientId] = true;\n      this.entities.completeSync(clientId, true);\n      var evt = new CustomEvent('clientConnected', {\n        detail: {\n          clientId: clientId\n        }\n      });\n      document.body.dispatchEvent(evt);\n    }\n  }, {\n    key: \"dataChannelClosed\",\n    value: function dataChannelClosed(clientId) {\n      NAF.log.write('Closed data channel from ' + clientId);\n      this.activeDataChannels[clientId] = false;\n      this.entities.removeEntitiesOfClient(clientId);\n      var evt = new CustomEvent('clientDisconnected', {\n        detail: {\n          clientId: clientId\n        }\n      });\n      document.body.dispatchEvent(evt);\n    }\n  }, {\n    key: \"hasActiveDataChannel\",\n    value: function hasActiveDataChannel(clientId) {\n      return !!(this.activeDataChannels[clientId] && this.activeDataChannels[clientId]);\n    }\n  }, {\n    key: \"broadcastData\",\n    value: function broadcastData(dataType, data) {\n      this.adapter.broadcastData(dataType, data);\n    }\n  }, {\n    key: \"broadcastDataGuaranteed\",\n    value: function broadcastDataGuaranteed(dataType, data) {\n      this.adapter.broadcastDataGuaranteed(dataType, data);\n    }\n  }, {\n    key: \"sendData\",\n    value: function sendData(toClientId, dataType, data, guaranteed) {\n      if (this.hasActiveDataChannel(toClientId)) {\n        if (guaranteed) {\n          this.adapter.sendDataGuaranteed(toClientId, dataType, data);\n        } else {\n          this.adapter.sendData(toClientId, dataType, data);\n        }\n      } else {// console.error(\"NOT-CONNECTED\", \"not connected to \" + toClient);\n      }\n    }\n  }, {\n    key: \"sendDataGuaranteed\",\n    value: function sendDataGuaranteed(toClientId, dataType, data) {\n      this.sendData(toClientId, dataType, data, true);\n    }\n  }, {\n    key: \"subscribeToDataChannel\",\n    value: function subscribeToDataChannel(dataType, callback) {\n      if (this.isReservedDataType(dataType)) {\n        NAF.log.error('NetworkConnection@subscribeToDataChannel: ' + dataType + ' is a reserved dataType. Choose another');\n        return;\n      }\n\n      this.dataChannelSubs[dataType] = callback;\n    }\n  }, {\n    key: \"unsubscribeToDataChannel\",\n    value: function unsubscribeToDataChannel(dataType) {\n      if (this.isReservedDataType(dataType)) {\n        NAF.log.error('NetworkConnection@unsubscribeToDataChannel: ' + dataType + ' is a reserved dataType. Choose another');\n        return;\n      }\n\n      delete this.dataChannelSubs[dataType];\n    }\n  }, {\n    key: \"isReservedDataType\",\n    value: function isReservedDataType(dataType) {\n      return dataType == ReservedDataType.Update || dataType == ReservedDataType.Remove;\n    }\n  }, {\n    key: \"receivedData\",\n    value: function receivedData(fromClientId, dataType, data, source) {\n      if (this.dataChannelSubs[dataType]) {\n        this.dataChannelSubs[dataType](fromClientId, dataType, data, source);\n      } else {\n        NAF.log.write('NetworkConnection@receivedData: ' + dataType + ' has not been subscribed to yet. Call subscribeToDataChannel()');\n      }\n    }\n  }, {\n    key: \"getServerTime\",\n    value: function getServerTime() {\n      return this.adapter.getServerTime();\n    }\n  }, {\n    key: \"disconnect\",\n    value: function disconnect() {\n      this.entities.removeRemoteEntities();\n      this.adapter.disconnect();\n      NAF.app = '';\n      NAF.room = '';\n      NAF.clientId = '';\n      this.connectedClients = {};\n      this.activeDataChannels = {};\n      this.adapter = null;\n      this.setupDefaultDataSubscriptions();\n      document.body.removeEventListener('connected', this.onConnectCallback);\n    }\n  }]);\n\n  return NetworkConnection;\n}();\n\nmodule.exports = NetworkConnection;\n\n//# sourceURL=webpack:///./src/NetworkConnection.js?");
 
 /***/ }),
-/* 13 */
+
+/***/ "./src/NetworkEntities.js":
+/*!********************************!*\
+  !*** ./src/NetworkEntities.js ***!
+  \********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var NafInterface = __webpack_require__(14);
-
-	var NoOpAdapter = function (_NafInterface) {
-	  _inherits(NoOpAdapter, _NafInterface);
-
-	  function NoOpAdapter() {
-	    _classCallCheck(this, NoOpAdapter);
-
-	    return _possibleConstructorReturn(this, (NoOpAdapter.__proto__ || Object.getPrototypeOf(NoOpAdapter)).apply(this, arguments));
-	  }
-
-	  _createClass(NoOpAdapter, [{
-	    key: 'setServerUrl',
-
-
-	    /* Pre-Connect setup methods - Call before `connect` */
-
-	    value: function setServerUrl(url) {
-	      this.notImplemented('setServerUrl');
-	    }
-	  }, {
-	    key: 'setApp',
-	    value: function setApp(app) {
-	      this.notImplemented('setApp');
-	    }
-	  }, {
-	    key: 'setRoom',
-	    value: function setRoom(roomName) {
-	      this.notImplemented('setRoom');
-	    }
-	  }, {
-	    key: 'setWebRtcOptions',
-	    value: function setWebRtcOptions(options) {
-	      this.notImplemented('setWebRtcOptions');
-	    }
-	  }, {
-	    key: 'setServerConnectListeners',
-	    value: function setServerConnectListeners(successListener, failureListener) {
-	      this.notImplemented('setServerConnectListeners');
-	    }
-	  }, {
-	    key: 'setRoomOccupantListener',
-	    value: function setRoomOccupantListener(occupantListener) {
-	      this.notImplemented('setRoomOccupantListener');
-	    }
-	  }, {
-	    key: 'setDataChannelListeners',
-	    value: function setDataChannelListeners(openListener, closedListener, messageListener) {
-	      this.notImplemented('setDataChannelListeners');
-	    }
-	  }, {
-	    key: 'connect',
-	    value: function connect() {
-	      this.notImplemented('connect');
-	    }
-	  }, {
-	    key: 'shouldStartConnectionTo',
-	    value: function shouldStartConnectionTo(clientId) {
-	      this.notImplemented('shouldStartConnectionTo');
-	    }
-	  }, {
-	    key: 'startStreamConnection',
-	    value: function startStreamConnection(clientId) {
-	      this.notImplemented('startStreamConnection');
-	    }
-	  }, {
-	    key: 'closeStreamConnection',
-	    value: function closeStreamConnection(clientId) {
-	      this.notImplemented('closeStreamConnection');
-	    }
-	  }, {
-	    key: 'getConnectStatus',
-	    value: function getConnectStatus(clientId) {
-	      this.notImplemented('getConnectStatus');
-	    }
-	  }, {
-	    key: 'getMediaStream',
-	    value: function getMediaStream(clientId) {
-	      return Promise.reject("Interface method not implemented: getMediaStream");
-	    }
-	  }, {
-	    key: 'getServerTime',
-	    value: function getServerTime() {
-	      this.notImplemented('getServerTime');
-	    }
-	  }, {
-	    key: 'sendData',
-	    value: function sendData(clientId, dataType, data) {
-	      this.notImplemented('sendData');
-	    }
-	  }, {
-	    key: 'sendDataGuaranteed',
-	    value: function sendDataGuaranteed(clientId, dataType, data) {
-	      this.notImplemented('sendDataGuaranteed');
-	    }
-	  }, {
-	    key: 'broadcastData',
-	    value: function broadcastData(dataType, data) {
-	      this.notImplemented('broadcastData');
-	    }
-	  }, {
-	    key: 'broadcastDataGuaranteed',
-	    value: function broadcastDataGuaranteed(dataType, data) {
-	      this.notImplemented('broadcastDataGuaranteed');
-	    }
-	  }, {
-	    key: 'disconnect',
-	    value: function disconnect() {
-	      this.notImplemented('disconnect');
-	    }
-	  }]);
-
-	  return NoOpAdapter;
-	}(NafInterface);
-
-	module.exports = NoOpAdapter;
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\n/* global NAF */\nvar ChildEntityCache = __webpack_require__(/*! ./ChildEntityCache */ \"./src/ChildEntityCache.js\");\n\nvar NetworkEntities =\n/*#__PURE__*/\nfunction () {\n  function NetworkEntities() {\n    _classCallCheck(this, NetworkEntities);\n\n    this.entities = {};\n    this.childCache = new ChildEntityCache();\n    this.onRemoteEntityCreatedEvent = new Event('remoteEntityCreated');\n    this._persistentFirstSyncs = {};\n  }\n\n  _createClass(NetworkEntities, [{\n    key: \"registerEntity\",\n    value: function registerEntity(networkId, entity) {\n      this.entities[networkId] = entity;\n    }\n  }, {\n    key: \"createRemoteEntity\",\n    value: function createRemoteEntity(entityData) {\n      NAF.log.write('Creating remote entity', entityData);\n      var networkId = entityData.networkId;\n      var el = NAF.schemas.getCachedTemplate(entityData.template);\n      el.setAttribute('id', 'naf-' + networkId);\n      this.initPosition(el, entityData.components);\n      this.initRotation(el, entityData.components);\n      this.addNetworkComponent(el, entityData);\n      this.registerEntity(networkId, el);\n      return el;\n    }\n  }, {\n    key: \"initPosition\",\n    value: function initPosition(entity, componentData) {\n      var hasPosition = componentData['position'];\n\n      if (hasPosition) {\n        var position = componentData.position;\n        entity.setAttribute('position', position);\n      }\n    }\n  }, {\n    key: \"initRotation\",\n    value: function initRotation(entity, componentData) {\n      var hasRotation = componentData['rotation'];\n\n      if (hasRotation) {\n        var rotation = componentData.rotation;\n        entity.setAttribute('rotation', rotation);\n      }\n    }\n  }, {\n    key: \"addNetworkComponent\",\n    value: function addNetworkComponent(entity, entityData) {\n      var networkData = {\n        template: entityData.template,\n        creator: entityData.creator,\n        owner: entityData.owner,\n        networkId: entityData.networkId,\n        persistent: entityData.persistent\n      };\n      entity.setAttribute('networked', networkData);\n      entity.firstUpdateData = entityData;\n    }\n  }, {\n    key: \"updateEntityMulti\",\n    value: function updateEntityMulti(client, dataType, entityDatas, source) {\n      if (NAF.options.syncSource && source !== NAF.options.syncSource) return;\n\n      for (var i = 0, l = entityDatas.d.length; i < l; i++) {\n        this.updateEntity(client, 'u', entityDatas.d[i], source);\n      }\n    }\n  }, {\n    key: \"updateEntity\",\n    value: function updateEntity(client, dataType, entityData, source) {\n      if (NAF.options.syncSource && source !== NAF.options.syncSource) return;\n      var networkId = entityData.networkId;\n\n      if (this.hasEntity(networkId)) {\n        this.entities[networkId].components.networked.networkUpdate(entityData);\n      } else if (entityData.isFirstSync) {\n        if (NAF.options.firstSyncSource && source !== NAF.options.firstSyncSource) {\n          NAF.log.write('Ignoring first sync from disallowed source', source);\n        } else {\n          if (entityData.persistent) {\n            // If we receive a firstSync for a persistent entity that we don't have yet,\n            // we assume the scene will create it at some point, so stash the update for later use.\n            this._persistentFirstSyncs[networkId] = entityData;\n          } else {\n            this.receiveFirstUpdateFromEntity(entityData);\n          }\n        }\n      }\n    }\n  }, {\n    key: \"receiveFirstUpdateFromEntity\",\n    value: function receiveFirstUpdateFromEntity(entityData) {\n      var parent = entityData.parent;\n      var networkId = entityData.networkId;\n      var parentNotCreatedYet = parent && !this.hasEntity(parent);\n\n      if (parentNotCreatedYet) {\n        this.childCache.addChild(parent, entityData);\n      } else {\n        var remoteEntity = this.createRemoteEntity(entityData);\n        this.createAndAppendChildren(networkId, remoteEntity);\n        this.addEntityToPage(remoteEntity, parent);\n      }\n    }\n  }, {\n    key: \"createAndAppendChildren\",\n    value: function createAndAppendChildren(parentId, parentEntity) {\n      var children = this.childCache.getChildren(parentId);\n\n      for (var i = 0; i < children.length; i++) {\n        var childEntityData = children[i];\n        var childId = childEntityData.networkId;\n\n        if (this.hasEntity(childId)) {\n          NAF.log.warn('Tried to instantiate entity multiple times', childId, childEntityData, 'Existing entity:', this.getEntity(childId));\n          continue;\n        }\n\n        var childEntity = this.createRemoteEntity(childEntityData);\n        this.createAndAppendChildren(childId, childEntity);\n        parentEntity.appendChild(childEntity);\n      }\n    }\n  }, {\n    key: \"addEntityToPage\",\n    value: function addEntityToPage(entity, parentId) {\n      if (this.hasEntity(parentId)) {\n        this.addEntityToParent(entity, parentId);\n      } else {\n        this.addEntityToSceneRoot(entity);\n      }\n    }\n  }, {\n    key: \"addEntityToParent\",\n    value: function addEntityToParent(entity, parentId) {\n      var parentEl = document.getElementById('naf-' + parentId);\n      parentEl.appendChild(entity);\n    }\n  }, {\n    key: \"addEntityToSceneRoot\",\n    value: function addEntityToSceneRoot(el) {\n      var scene = document.querySelector('a-scene');\n      scene.appendChild(el);\n    }\n  }, {\n    key: \"completeSync\",\n    value: function completeSync(targetClientId, isFirstSync) {\n      for (var id in this.entities) {\n        if (this.entities[id]) {\n          this.entities[id].components.networked.syncAll(targetClientId, isFirstSync);\n        }\n      }\n    }\n  }, {\n    key: \"removeRemoteEntity\",\n    value: function removeRemoteEntity(toClient, dataType, data, source) {\n      if (NAF.options.syncSource && source !== NAF.options.syncSource) return;\n      var id = data.networkId;\n      return this.removeEntity(id);\n    }\n  }, {\n    key: \"removeEntitiesOfClient\",\n    value: function removeEntitiesOfClient(clientId) {\n      var entityList = [];\n\n      for (var id in this.entities) {\n        var entityCreator = NAF.utils.getCreator(this.entities[id]);\n\n        if (entityCreator === clientId) {\n          var persists = void 0;\n          var component = this.entities[id].getAttribute('networked');\n\n          if (component && component.persistent) {\n            persists = NAF.utils.takeOwnership(this.entities[id]);\n          }\n\n          if (!persists) {\n            var entity = this.removeEntity(id);\n            entityList.push(entity);\n          }\n        }\n      }\n\n      return entityList;\n    }\n  }, {\n    key: \"removeEntity\",\n    value: function removeEntity(id) {\n      this.forgetPersistentFirstSync(id);\n\n      if (this.hasEntity(id)) {\n        var entity = this.entities[id];\n        this.forgetEntity(id);\n        entity.parentNode.removeChild(entity);\n        return entity;\n      } else {\n        NAF.log.error(\"Tried to remove entity I don't have.\");\n        return null;\n      }\n    }\n  }, {\n    key: \"forgetEntity\",\n    value: function forgetEntity(id) {\n      delete this.entities[id];\n      this.forgetPersistentFirstSync(id);\n    }\n  }, {\n    key: \"getPersistentFirstSync\",\n    value: function getPersistentFirstSync(id) {\n      return this._persistentFirstSyncs[id];\n    }\n  }, {\n    key: \"forgetPersistentFirstSync\",\n    value: function forgetPersistentFirstSync(id) {\n      delete this._persistentFirstSyncs[id];\n    }\n  }, {\n    key: \"getEntity\",\n    value: function getEntity(id) {\n      if (this.entities[id]) {\n        return this.entities[id];\n      }\n\n      return null;\n    }\n  }, {\n    key: \"hasEntity\",\n    value: function hasEntity(id) {\n      return !!this.entities[id];\n    }\n  }, {\n    key: \"removeRemoteEntities\",\n    value: function removeRemoteEntities() {\n      this.childCache = new ChildEntityCache();\n\n      for (var id in this.entities) {\n        var owner = this.entities[id].getAttribute('networked').owner;\n\n        if (owner != NAF.clientId) {\n          this.removeEntity(id);\n        }\n      }\n    }\n  }]);\n\n  return NetworkEntities;\n}();\n\nmodule.exports = NetworkEntities;\n\n//# sourceURL=webpack:///./src/NetworkEntities.js?");
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports) {
 
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	/* global NAF */
-
-	var NafInterface = function () {
-	  function NafInterface() {
-	    _classCallCheck(this, NafInterface);
-	  }
-
-	  _createClass(NafInterface, [{
-	    key: 'notImplemented',
-	    value: function notImplemented(name) {
-	      NAF.log.error('Interface method not implemented:', name);
-	    }
-	  }]);
-
-	  return NafInterface;
-	}();
-
-	module.exports = NafInterface;
-
-/***/ }),
-/* 15 */
+/***/ "./src/Schemas.js":
+/*!************************!*\
+  !*** ./src/Schemas.js ***!
+  \************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	/* global NAF */
-	var NoOpAdapter = __webpack_require__(13);
-
-	var EasyRtcAdapter = function (_NoOpAdapter) {
-	  _inherits(EasyRtcAdapter, _NoOpAdapter);
-
-	  function EasyRtcAdapter(easyrtc) {
-	    _classCallCheck(this, EasyRtcAdapter);
-
-	    var _this = _possibleConstructorReturn(this, (EasyRtcAdapter.__proto__ || Object.getPrototypeOf(EasyRtcAdapter)).call(this));
-
-	    _this.easyrtc = easyrtc || window.easyrtc;
-	    _this.app = "default";
-	    _this.room = "default";
-
-	    _this.audioStreams = {};
-	    _this.pendingAudioRequest = {};
-
-	    _this.serverTimeRequests = 0;
-	    _this.timeOffsets = [];
-	    _this.avgTimeOffset = 0;
-	    return _this;
-	  }
-
-	  _createClass(EasyRtcAdapter, [{
-	    key: "setServerUrl",
-	    value: function setServerUrl(url) {
-	      this.easyrtc.setSocketUrl(url);
-	    }
-	  }, {
-	    key: "setApp",
-	    value: function setApp(appName) {
-	      this.app = appName;
-	    }
-	  }, {
-	    key: "setRoom",
-	    value: function setRoom(roomName) {
-	      this.room = roomName;
-	      this.easyrtc.joinRoom(roomName, null);
-	    }
-
-	    // options: { datachannel: bool, audio: bool }
-
-	  }, {
-	    key: "setWebRtcOptions",
-	    value: function setWebRtcOptions(options) {
-	      // this.easyrtc.enableDebug(true);
-	      this.easyrtc.enableDataChannels(options.datachannel);
-
-	      this.easyrtc.enableVideo(false);
-	      this.easyrtc.enableAudio(options.audio);
-
-	      this.easyrtc.enableVideoReceive(false);
-	      this.easyrtc.enableAudioReceive(options.audio);
-	    }
-	  }, {
-	    key: "setServerConnectListeners",
-	    value: function setServerConnectListeners(successListener, failureListener) {
-	      this.connectSuccess = successListener;
-	      this.connectFailure = failureListener;
-	    }
-	  }, {
-	    key: "setRoomOccupantListener",
-	    value: function setRoomOccupantListener(occupantListener) {
-	      this.easyrtc.setRoomOccupantListener(function (roomName, occupants, primary) {
-	        occupantListener(occupants);
-	      });
-	    }
-	  }, {
-	    key: "setDataChannelListeners",
-	    value: function setDataChannelListeners(openListener, closedListener, messageListener) {
-	      this.easyrtc.setDataChannelOpenListener(openListener);
-	      this.easyrtc.setDataChannelCloseListener(closedListener);
-	      this.easyrtc.setPeerListener(messageListener);
-	    }
-	  }, {
-	    key: "updateTimeOffset",
-	    value: function updateTimeOffset() {
-	      var _this2 = this;
-
-	      var clientSentTime = Date.now() + this.avgTimeOffset;
-
-	      return fetch(document.location.href, { method: "HEAD", cache: "no-cache" }).then(function (res) {
-	        var precision = 1000;
-	        var serverReceivedTime = new Date(res.headers.get("Date")).getTime() + precision / 2;
-	        var clientReceivedTime = Date.now();
-	        var serverTime = serverReceivedTime + (clientReceivedTime - clientSentTime) / 2;
-	        var timeOffset = serverTime - clientReceivedTime;
-
-	        _this2.serverTimeRequests++;
-
-	        if (_this2.serverTimeRequests <= 10) {
-	          _this2.timeOffsets.push(timeOffset);
-	        } else {
-	          _this2.timeOffsets[_this2.serverTimeRequests % 10] = timeOffset;
-	        }
-
-	        _this2.avgTimeOffset = _this2.timeOffsets.reduce(function (acc, offset) {
-	          return acc += offset;
-	        }, 0) / _this2.timeOffsets.length;
-
-	        if (_this2.serverTimeRequests > 10) {
-	          setTimeout(function () {
-	            return _this2.updateTimeOffset();
-	          }, 5 * 60 * 1000); // Sync clock every 5 minutes.
-	        } else {
-	          _this2.updateTimeOffset();
-	        }
-	      });
-	    }
-	  }, {
-	    key: "connect",
-	    value: function connect() {
-	      var _this3 = this;
-
-	      Promise.all([this.updateTimeOffset(), new Promise(function (resolve, reject) {
-	        if (_this3.easyrtc.audioEnabled) {
-	          _this3._connectWithAudio(resolve, reject);
-	        } else {
-	          _this3.easyrtc.connect(_this3.app, resolve, reject);
-	        }
-	      })]).then(function (_ref) {
-	        var _ref2 = _slicedToArray(_ref, 2),
-	            _ = _ref2[0],
-	            clientId = _ref2[1];
-
-	        _this3._storeAudioStream(_this3.easyrtc.myEasyrtcid, _this3.easyrtc.getLocalStream());
-
-	        _this3._myRoomJoinTime = _this3._getRoomJoinTime(clientId);
-	        _this3.connectSuccess(clientId);
-	      }).catch(this.connectFailure);
-	    }
-	  }, {
-	    key: "shouldStartConnectionTo",
-	    value: function shouldStartConnectionTo(client) {
-	      return this._myRoomJoinTime <= client.roomJoinTime;
-	    }
-	  }, {
-	    key: "startStreamConnection",
-	    value: function startStreamConnection(clientId) {
-	      this.easyrtc.call(clientId, function (caller, media) {
-	        if (media === "datachannel") {
-	          NAF.log.write("Successfully started datachannel to ", caller);
-	        }
-	      }, function (errorCode, errorText) {
-	        NAF.log.error(errorCode, errorText);
-	      }, function (wasAccepted) {
-	        // console.log("was accepted=" + wasAccepted);
-	      });
-	    }
-	  }, {
-	    key: "closeStreamConnection",
-	    value: function closeStreamConnection(clientId) {
-	      // Handled by easyrtc
-	    }
-	  }, {
-	    key: "sendData",
-	    value: function sendData(clientId, dataType, data) {
-	      // send via webrtc otherwise fallback to websockets
-	      this.easyrtc.sendData(clientId, dataType, data);
-	    }
-	  }, {
-	    key: "sendDataGuaranteed",
-	    value: function sendDataGuaranteed(clientId, dataType, data) {
-	      this.easyrtc.sendDataWS(clientId, dataType, data);
-	    }
-	  }, {
-	    key: "broadcastData",
-	    value: function broadcastData(dataType, data) {
-	      var roomOccupants = this.easyrtc.getRoomOccupantsAsMap(this.room);
-
-	      // Iterate over the keys of the easyrtc room occupants map.
-	      // getRoomOccupantsAsArray uses Object.keys which allocates memory.
-	      for (var roomOccupant in roomOccupants) {
-	        if (roomOccupants.hasOwnProperty(roomOccupant) && roomOccupant !== this.easyrtc.myEasyrtcid) {
-	          // send via webrtc otherwise fallback to websockets
-	          this.easyrtc.sendData(roomOccupant, dataType, data);
-	        }
-	      }
-	    }
-	  }, {
-	    key: "broadcastDataGuaranteed",
-	    value: function broadcastDataGuaranteed(dataType, data) {
-	      var destination = { targetRoom: this.room };
-	      this.easyrtc.sendDataWS(destination, dataType, data);
-	    }
-	  }, {
-	    key: "getConnectStatus",
-	    value: function getConnectStatus(clientId) {
-	      var status = this.easyrtc.getConnectStatus(clientId);
-
-	      if (status == this.easyrtc.IS_CONNECTED) {
-	        return NAF.adapters.IS_CONNECTED;
-	      } else if (status == this.easyrtc.NOT_CONNECTED) {
-	        return NAF.adapters.NOT_CONNECTED;
-	      } else {
-	        return NAF.adapters.CONNECTING;
-	      }
-	    }
-	  }, {
-	    key: "getMediaStream",
-	    value: function getMediaStream(clientId) {
-	      var that = this;
-	      if (this.audioStreams[clientId]) {
-	        NAF.log.write("Already had audio for " + clientId);
-	        return Promise.resolve(this.audioStreams[clientId]);
-	      } else {
-	        NAF.log.write("Waiting on audio for " + clientId);
-	        return new Promise(function (resolve) {
-	          that.pendingAudioRequest[clientId] = resolve;
-	        });
-	      }
-	    }
-	  }, {
-	    key: "disconnect",
-	    value: function disconnect() {
-	      this.easyrtc.disconnect();
-	    }
-
-	    /**
-	     * Privates
-	     */
-
-	  }, {
-	    key: "_storeAudioStream",
-	    value: function _storeAudioStream(easyrtcid, stream) {
-	      this.audioStreams[easyrtcid] = stream;
-	      if (this.pendingAudioRequest[easyrtcid]) {
-	        NAF.log.write("got pending audio for " + easyrtcid);
-	        this.pendingAudioRequest[easyrtcid](stream);
-	        delete this.pendingAudioRequest[easyrtcid](stream);
-	      }
-	    }
-	  }, {
-	    key: "_connectWithAudio",
-	    value: function _connectWithAudio(connectSuccess, connectFailure) {
-	      var that = this;
-
-	      this.easyrtc.setStreamAcceptor(this._storeAudioStream.bind(this));
-
-	      this.easyrtc.setOnStreamClosed(function (easyrtcid) {
-	        delete that.audioStreams[easyrtcid];
-	      });
-
-	      this.easyrtc.initMediaSource(function () {
-	        that.easyrtc.connect(that.app, connectSuccess, connectFailure);
-	      }, function (errorCode, errmesg) {
-	        NAF.log.error(errorCode, errmesg);
-	      });
-	    }
-	  }, {
-	    key: "_getRoomJoinTime",
-	    value: function _getRoomJoinTime(clientId) {
-	      var myRoomId = NAF.room;
-	      var joinTime = this.easyrtc.getRoomOccupantsAsMap(myRoomId)[clientId].roomJoinTime;
-	      return joinTime;
-	    }
-	  }, {
-	    key: "getServerTime",
-	    value: function getServerTime() {
-	      return Date.now() + this.avgTimeOffset;
-	    }
-	  }]);
-
-	  return EasyRtcAdapter;
-	}(NoOpAdapter);
-
-	module.exports = EasyRtcAdapter;
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\n/* global NAF */\nvar Schemas =\n/*#__PURE__*/\nfunction () {\n  function Schemas() {\n    _classCallCheck(this, Schemas);\n\n    this.schemaDict = {};\n    this.templateCache = {};\n  }\n\n  _createClass(Schemas, [{\n    key: \"createDefaultSchema\",\n    value: function createDefaultSchema(name) {\n      return {\n        template: name,\n        components: ['position', 'rotation']\n      };\n    }\n  }, {\n    key: \"add\",\n    value: function add(schema) {\n      if (this.validateSchema(schema)) {\n        this.schemaDict[schema.template] = schema;\n        var templateEl = document.querySelector(schema.template);\n\n        if (!templateEl) {\n          NAF.log.error(\"Template el not found for \".concat(schema.template, \", make sure NAF.schemas.add is called after <a-scene> is defined.\"));\n          return;\n        }\n\n        if (!this.validateTemplate(schema, templateEl)) {\n          return;\n        }\n\n        this.templateCache[schema.template] = document.importNode(templateEl.content, true);\n      } else {\n        NAF.log.error('Schema not valid: ', schema);\n        NAF.log.error('See https://github.com/haydenjameslee/networked-aframe#syncing-custom-components');\n      }\n    }\n  }, {\n    key: \"getCachedTemplate\",\n    value: function getCachedTemplate(template) {\n      if (!this.templateIsCached(template)) {\n        if (this.templateExistsInScene(template)) {\n          this.add(this.createDefaultSchema(template));\n        } else {\n          NAF.log.error(\"Template el for \".concat(template, \" is not in the scene, add the template to <a-assets> and register with NAF.schemas.add.\"));\n        }\n      }\n\n      return this.templateCache[template].firstElementChild.cloneNode(true);\n    }\n  }, {\n    key: \"templateIsCached\",\n    value: function templateIsCached(template) {\n      return !!this.templateCache[template];\n    }\n  }, {\n    key: \"getComponents\",\n    value: function getComponents(template) {\n      var components = ['position', 'rotation'];\n\n      if (this.hasTemplate(template)) {\n        components = this.schemaDict[template].components;\n      }\n\n      return components;\n    }\n  }, {\n    key: \"hasTemplate\",\n    value: function hasTemplate(template) {\n      return !!this.schemaDict[template];\n    }\n  }, {\n    key: \"templateExistsInScene\",\n    value: function templateExistsInScene(templateSelector) {\n      var el = document.querySelector(templateSelector);\n      return el && this.isTemplateTag(el);\n    }\n  }, {\n    key: \"validateSchema\",\n    value: function validateSchema(schema) {\n      return !!(schema['template'] && schema['components']);\n    }\n  }, {\n    key: \"validateTemplate\",\n    value: function validateTemplate(schema, el) {\n      if (!this.isTemplateTag(el)) {\n        NAF.log.error(\"Template for \".concat(schema.template, \" is not a <template> tag. Instead found: \").concat(el.tagName));\n        return false;\n      } else if (!this.templateHasOneOrZeroChildren(el)) {\n        NAF.log.error(\"Template for \".concat(schema.template, \" has more than one child. Templates must have one direct child element, no more. Template found:\"), el);\n        return false;\n      } else {\n        return true;\n      }\n    }\n  }, {\n    key: \"isTemplateTag\",\n    value: function isTemplateTag(el) {\n      return el.tagName.toLowerCase() === 'template';\n    }\n  }, {\n    key: \"templateHasOneOrZeroChildren\",\n    value: function templateHasOneOrZeroChildren(el) {\n      return el.content.childElementCount < 2;\n    }\n  }, {\n    key: \"remove\",\n    value: function remove(template) {\n      delete this.schemaDict[template];\n    }\n  }, {\n    key: \"clear\",\n    value: function clear() {\n      this.schemaDict = {};\n    }\n  }]);\n\n  return Schemas;\n}();\n\nmodule.exports = Schemas;\n\n//# sourceURL=webpack:///./src/Schemas.js?");
 
 /***/ }),
-/* 16 */
-/***/ (function(module, exports) {
 
-	'use strict';
-
-	/* global AFRAME, NAF */
-
-	AFRAME.registerComponent('networked-scene', {
-	  schema: {
-	    serverURL: { default: '/' },
-	    app: { default: 'default' },
-	    room: { default: 'default' },
-	    connectOnLoad: { default: true },
-	    onConnect: { default: 'onConnect' },
-	    adapter: { default: 'wsEasyRtc' }, // See https://github.com/networked-aframe/networked-aframe#adapters for list of adapters
-	    audio: { default: false }, // Only if adapter supports audio
-	    debug: { default: false }
-	  },
-
-	  init: function init() {
-	    var el = this.el;
-	    this.connect = this.connect.bind(this);
-	    el.addEventListener('connect', this.connect);
-	    if (this.data.connectOnLoad) {
-	      el.emit('connect', null, false);
-	    }
-	  },
-
-	  /**
-	   * Connect to signalling server and begin connecting to other clients
-	   */
-	  connect: function connect() {
-	    NAF.log.setDebug(this.data.debug);
-	    NAF.log.write('Networked-Aframe Connecting...');
-
-	    this.checkDeprecatedProperties();
-	    this.setupNetworkAdapter();
-
-	    if (this.hasOnConnectFunction()) {
-	      this.callOnConnect();
-	    }
-	    return NAF.connection.connect(this.data.serverURL, this.data.app, this.data.room, this.data.audio);
-	  },
-
-	  checkDeprecatedProperties: function checkDeprecatedProperties() {
-	    // No current
-	  },
-
-	  setupNetworkAdapter: function setupNetworkAdapter() {
-	    var adapterName = this.data.adapter;
-	    var adapter = NAF.adapters.make(adapterName);
-	    NAF.connection.setNetworkAdapter(adapter);
-	  },
-
-	  hasOnConnectFunction: function hasOnConnectFunction() {
-	    return this.data.onConnect != '' && window.hasOwnProperty(this.data.onConnect);
-	  },
-
-	  callOnConnect: function callOnConnect() {
-	    NAF.connection.onConnect(window[this.data.onConnect]);
-	  },
-
-	  remove: function remove() {
-	    NAF.log.write('networked-scene disconnected');
-	    this.el.removeEventListener('connect', this.connect);
-	    NAF.connection.disconnect();
-	  }
-	});
-
-/***/ }),
-/* 17 */
+/***/ "./src/adapters/AdapterFactory.js":
+/*!****************************************!*\
+  !*** ./src/adapters/AdapterFactory.js ***!
+  \****************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	/* global AFRAME, NAF */
-	var componentHelper = __webpack_require__(18);
-	var Compressor = __webpack_require__(22);
-	var bind = AFRAME.utils.bind;
-
-	AFRAME.registerComponent('networked', {
-	  schema: {
-	    template: { default: '' },
-	    attachTemplateToLocal: { default: true },
-
-	    networkId: { default: '' },
-	    owner: { default: '' }
-	  },
-
-	  init: function init() {
-	    this.OWNERSHIP_GAINED = 'ownership-gained';
-	    this.OWNERSHIP_CHANGED = 'ownership-changed';
-	    this.OWNERSHIP_LOST = 'ownership-lost';
-
-	    var wasCreatedByNetwork = this.wasCreatedByNetwork();
-
-	    this.onConnected = bind(this.onConnected, this);
-	    this.onSyncAll = bind(this.onSyncAll, this);
-	    this.syncDirty = bind(this.syncDirty, this);
-	    this.networkUpdateHandler = bind(this.networkUpdateHandler, this);
-
-	    this.cachedData = {};
-	    this.initNetworkParent();
-
-	    if (this.data.networkId === '') {
-	      this.el.setAttribute(this.name, { networkId: NAF.utils.createNetworkId() });
-	    }
-
-	    if (wasCreatedByNetwork) {
-	      this.firstUpdate();
-	      this.attachLerp();
-	    } else {
-	      if (this.data.attachTemplateToLocal) {
-	        this.attachTemplateToLocal();
-	      }
-
-	      this.registerEntity(this.data.networkId);
-	    }
-
-	    this.lastOwnerTime = -1;
-
-	    if (NAF.clientId) {
-	      this.onConnected();
-	    } else {
-	      document.body.addEventListener('connected', this.onConnected, false);
-	    }
-
-	    document.body.dispatchEvent(this.entityCreatedEvent());
-	    this.el.dispatchEvent(new CustomEvent('instantiated', { detail: { el: this.el } }));
-	  },
-
-	  attachTemplateToLocal: function attachTemplateToLocal() {
-	    var template = NAF.schemas.getCachedTemplate(this.data.template);
-	    var elAttrs = template.attributes;
-
-	    // Merge root element attributes with this entity
-	    for (var attrIdx = 0; attrIdx < elAttrs.length; attrIdx++) {
-	      this.el.setAttribute(elAttrs[attrIdx].name, elAttrs[attrIdx].value);
-	    }
-
-	    // Append all child elements
-	    while (template.firstElementChild) {
-	      this.el.appendChild(template.firstElementChild);
-	    }
-	  },
-
-	  takeOwnership: function takeOwnership() {
-	    var owner = this.data.owner;
-	    var lastOwnerTime = this.lastOwnerTime;
-	    var now = NAF.connection.getServerTime();
-	    if (owner && !this.isMine() && lastOwnerTime < now) {
-	      this.lastOwnerTime = now;
-	      this.removeLerp();
-	      this.el.setAttribute('networked', { owner: NAF.clientId });
-	      this.syncAll();
-	      this.el.emit(this.OWNERSHIP_GAINED, { el: this.el, oldOwner: owner });
-	      this.el.emit(this.OWNERSHIP_CHANGED, { el: this.el, oldOwner: owner, newOwner: NAF.clientId });
-	      return true;
-	    }
-	    return false;
-	  },
-
-	  wasCreatedByNetwork: function wasCreatedByNetwork() {
-	    return !!this.el.firstUpdateData;
-	  },
-
-	  initNetworkParent: function initNetworkParent() {
-	    var parentEl = this.el.parentElement;
-	    if (parentEl.hasOwnProperty('components') && parentEl.components.hasOwnProperty('networked')) {
-	      this.parent = parentEl;
-	    } else {
-	      this.parent = null;
-	    }
-	  },
-
-	  attachLerp: function attachLerp() {
-	    if (NAF.options.useLerp) {
-	      this.el.setAttribute('lerp', '');
-	    }
-	  },
-
-	  removeLerp: function removeLerp() {
-	    if (NAF.options.useLerp) {
-	      this.el.removeAttribute('lerp');
-	    }
-	  },
-
-	  registerEntity: function registerEntity(networkId) {
-	    NAF.entities.registerEntity(networkId, this.el);
-	  },
-
-	  firstUpdate: function firstUpdate() {
-	    var entityData = this.el.firstUpdateData;
-	    this.networkUpdate(entityData);
-	  },
-
-	  onConnected: function onConnected() {
-	    var _this = this;
-
-	    if (this.data.owner === '') {
-	      this.lastOwnerTime = NAF.connection.getServerTime();
-	      this.el.setAttribute(this.name, { owner: NAF.clientId });
-	      setTimeout(function () {
-	        //a-primitives attach their components on the next frame; wait for components to be attached before calling syncAll
-	        _this.syncAll();
-	      }, 0);
-	    }
-
-	    document.body.removeEventListener('connected', this.onConnected, false);
-	  },
-
-	  isMine: function isMine() {
-	    return this.data.owner === NAF.clientId;
-	  },
-
-	  play: function play() {
-	    this.bindEvents();
-	  },
-
-	  bindEvents: function bindEvents() {
-	    var el = this.el;
-	    el.addEventListener('sync', this.syncDirty);
-	    el.addEventListener('syncAll', this.onSyncAll);
-	    el.addEventListener('networkUpdate', this.networkUpdateHandler);
-	  },
-
-	  pause: function pause() {
-	    this.unbindEvents();
-	  },
-
-	  unbindEvents: function unbindEvents() {
-	    var el = this.el;
-	    el.removeEventListener('sync', this.syncDirty);
-	    el.removeEventListener('syncAll', this.onSyncAll);
-	    el.removeEventListener('networkUpdate', this.networkUpdateHandler);
-	  },
-
-	  tick: function tick() {
-	    if (this.isMine() && this.needsToSync()) {
-	      this.syncDirty();
-	    }
-	  },
-
-	  onSyncAll: function onSyncAll(e) {
-	    var targetClientId = e.detail.targetClientId;
-
-	    this.syncAll(targetClientId);
-	  },
-
-	  /* Sending updates */
-
-	  syncAll: function syncAll(targetClientId) {
-	    if (!this.canSync()) {
-	      return;
-	    }
-	    this.updateNextSyncTime();
-	    var syncedComps = this.getAllSyncedComponents();
-	    var components = componentHelper.gatherComponentsData(this.el, syncedComps);
-	    var syncData = this.createSyncData(components);
-	    // console.error('syncAll', syncData, NAF.clientId);
-	    if (targetClientId) {
-	      NAF.connection.sendDataGuaranteed(targetClientId, 'u', syncData);
-	    } else {
-	      NAF.connection.broadcastDataGuaranteed('u', syncData);
-	    }
-	    this.updateCache(components);
-	  },
-
-	  syncDirty: function syncDirty() {
-	    if (!this.canSync()) {
-	      return;
-	    }
-	    this.updateNextSyncTime();
-	    var syncedComps = this.getAllSyncedComponents();
-	    var dirtyComps = componentHelper.findDirtyComponents(this.el, syncedComps, this.cachedData);
-	    if (dirtyComps.length == 0) {
-	      return;
-	    }
-	    var components = componentHelper.gatherComponentsData(this.el, dirtyComps);
-	    var syncData = this.createSyncData(components);
-	    if (NAF.options.compressSyncPackets) {
-	      syncData = Compressor.compressSyncData(syncData, syncedComps);
-	    }
-	    NAF.connection.broadcastData('u', syncData);
-	    // console.error('syncDirty', syncData, NAF.clientId);
-	    this.updateCache(components);
-	  },
-
-	  canSync: function canSync() {
-	    return this.data.owner && this.isMine();
-	  },
-
-	  needsToSync: function needsToSync() {
-	    return NAF.utils.now() >= this.nextSyncTime;
-	  },
-
-	  updateNextSyncTime: function updateNextSyncTime() {
-	    this.nextSyncTime = NAF.utils.now() + 1000 / NAF.options.updateRate;
-	  },
-
-	  createSyncData: function createSyncData(components) {
-	    var data = this.data;
-	    var sync = {
-	      0: 0, // 0 for not compressed
-	      networkId: data.networkId,
-	      owner: data.owner,
-	      lastOwnerTime: this.lastOwnerTime,
-	      template: data.template,
-	      parent: this.getParentId(),
-	      components: components
-	    };
-	    return sync;
-	  },
-
-	  getParentId: function getParentId() {
-	    this.initNetworkParent(); // TODO fix calling this each network tick
-	    if (!this.parent) {
-	      return null;
-	    }
-	    var netComp = this.parent.getAttribute('networked');
-	    return netComp.networkId;
-	  },
-
-	  getAllSyncedComponents: function getAllSyncedComponents() {
-	    return NAF.schemas.getComponents(this.data.template);
-	  },
-
-	  updateCache: function updateCache(components) {
-	    for (var name in components) {
-	      this.cachedData[name] = components[name];
-	    }
-	  },
-
-	  /* Receiving updates */
-
-	  networkUpdateHandler: function networkUpdateHandler(received) {
-	    var entityData = received.detail.entityData;
-	    this.networkUpdate(entityData);
-	  },
-
-	  networkUpdate: function networkUpdate(entityData) {
-	    if (entityData[0] == 1) {
-	      entityData = Compressor.decompressSyncData(entityData, this.getAllSyncedComponents());
-	    }
-
-	    // Avoid updating components if the entity data received did not come from the current owner.
-	    if (entityData.lastOwnerTime < this.lastOwnerTime || this.lastOwnerTime === entityData.lastOwnerTime && this.data.owner > entityData.owner) {
-	      return;
-	    }
-
-	    if (this.data.owner !== entityData.owner) {
-	      var wasMine = this.isMine();
-	      this.lastOwnerTime = entityData.lastOwnerTime;
-	      this.attachLerp();
-
-	      var oldOwner = this.data.owner;
-	      var newOwner = entityData.owner;
-	      if (wasMine) {
-	        this.el.emit(this.OWNERSHIP_LOST, { el: this.el, newOwner: newOwner });
-	      }
-	      this.el.emit(this.OWNERSHIP_CHANGED, { el: this.el, oldOwner: oldOwner, newOwner: newOwner });
-
-	      this.el.setAttribute('networked', { owner: entityData.owner });
-	    }
-	    this.updateComponents(entityData.components);
-	  },
-
-	  updateComponents: function updateComponents(components) {
-	    var el = this.el;
-
-	    for (var key in components) {
-	      if (this.isSyncableComponent(key)) {
-	        var data = components[key];
-	        if (NAF.utils.isChildSchemaKey(key)) {
-	          var schema = NAF.utils.keyToChildSchema(key);
-	          var childEl = schema.selector ? el.querySelector(schema.selector) : el;
-	          if (childEl) {
-	            // Is false when first called in init
-	            if (schema.property) {
-	              childEl.setAttribute(schema.component, schema.property, data);
-	            } else {
-	              childEl.setAttribute(schema.component, data);
-	            }
-	          }
-	        } else {
-	          el.setAttribute(key, data);
-	        }
-	      }
-	    }
-	  },
-
-	  isSyncableComponent: function isSyncableComponent(key) {
-	    if (NAF.utils.isChildSchemaKey(key)) {
-	      var schema = NAF.utils.keyToChildSchema(key);
-	      return this.hasThisChildSchema(schema);
-	    } else {
-	      return this.getAllSyncedComponents().indexOf(key) != -1;
-	    }
-	  },
-
-	  hasThisChildSchema: function hasThisChildSchema(schema) {
-	    var schemaComponents = this.getAllSyncedComponents();
-	    for (var i in schemaComponents) {
-	      var localChildSchema = schemaComponents[i];
-	      if (NAF.utils.childSchemaEqual(localChildSchema, schema)) {
-	        return true;
-	      }
-	    }
-	    return false;
-	  },
-
-	  remove: function remove() {
-	    if (this.isMine() && NAF.connection.isConnected()) {
-	      var syncData = { networkId: this.data.networkId };
-	      NAF.connection.broadcastDataGuaranteed('r', syncData);
-	    }
-	    document.body.dispatchEvent(this.entityRemovedEvent(this.data.networkId));
-	  },
-
-	  entityCreatedEvent: function entityCreatedEvent() {
-	    return new CustomEvent('entityCreated', { detail: { el: this.el } });
-	  },
-	  entityRemovedEvent: function entityRemovedEvent(networkId) {
-	    return new CustomEvent('entityRemoved', { detail: { networkId: networkId } });
-	  }
-	});
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\nvar WebrtcAdapter = __webpack_require__(/*! ./naf-webrtc-adapter */ \"./src/adapters/naf-webrtc-adapter.js\");\n\nvar SocketioAdapter = __webpack_require__(/*! ./naf-socketio-adapter */ \"./src/adapters/naf-socketio-adapter.js\");\n\nvar AdapterFactory =\n/*#__PURE__*/\nfunction () {\n  function AdapterFactory() {\n    _classCallCheck(this, AdapterFactory);\n\n    this.adapters = {\n      \"socketio\": SocketioAdapter,\n      \"webrtc\": WebrtcAdapter\n    };\n    this.IS_CONNECTED = AdapterFactory.IS_CONNECTED;\n    this.CONNECTING = AdapterFactory.CONNECTING;\n    this.NOT_CONNECTED = AdapterFactory.NOT_CONNECTED;\n  }\n\n  _createClass(AdapterFactory, [{\n    key: \"register\",\n    value: function register(adapterName, AdapterClass) {\n      this.adapters[adapterName] = AdapterClass;\n    }\n  }, {\n    key: \"make\",\n    value: function make(adapterName) {\n      var name = adapterName.toLowerCase();\n\n      if (this.adapters[name]) {\n        var AdapterClass = this.adapters[name];\n        return new AdapterClass();\n      } else if (name === 'easyrtc' || name == 'wseasyrtc') {\n        throw new Error(\"Adapter: \" + adapterName + \" not registered. EasyRTC support was removed in Networked-Aframe 0.7.0.\" + \" To use the deprecated EasyRTC adapter see https://github.com/networked-aframe/naf-easyrtc-adapter\");\n      } else {\n        throw new Error(\"Adapter: \" + adapterName + \" not registered. Please use NAF.adapters.register() to register this adapter.\");\n      }\n    }\n  }]);\n\n  return AdapterFactory;\n}();\n\nAdapterFactory.IS_CONNECTED = \"IS_CONNECTED\";\nAdapterFactory.CONNECTING = \"CONNECTING\";\nAdapterFactory.NOT_CONNECTED = \"NOT_CONNECTED\";\nmodule.exports = AdapterFactory;\n\n//# sourceURL=webpack:///./src/adapters/AdapterFactory.js?");
 
 /***/ }),
-/* 18 */
+
+/***/ "./src/adapters/naf-socketio-adapter.js":
+/*!**********************************************!*\
+  !*** ./src/adapters/naf-socketio-adapter.js ***!
+  \**********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	/* global AFRAME, NAF */
-	var deepEqual = __webpack_require__(19);
-
-	module.exports.gatherComponentsData = function (el, schemaComponents) {
-	  var compsData = {};
-
-	  for (var i in schemaComponents) {
-	    var element = schemaComponents[i];
-
-	    if (typeof element === 'string') {
-	      if (el.components.hasOwnProperty(element)) {
-	        compsData[element] = AFRAME.utils.clone(el.getAttribute(element));
-	      }
-	    } else {
-	      var childKey = NAF.utils.childSchemaToKey(element);
-	      var child = element.selector ? el.querySelector(element.selector) : el;
-	      if (child) {
-	        if (child.components.hasOwnProperty(element.component)) {
-	          var attributeData = child.getAttribute(element.component);
-	          var data = element.property ? attributeData[element.property] : attributeData;
-	          compsData[childKey] = AFRAME.utils.clone(data);
-	        } else {
-	          // NAF.log.write('ComponentHelper.gatherComponentsData: Could not find component ' + element.component + ' on child ', child, child.components);
-	        }
-	      }
-	    }
-	  }
-	  return compsData;
-	};
-
-	module.exports.findDirtyComponents = function (el, syncedComps, cachedData) {
-	  var dirtyComps = [];
-
-	  for (var i in syncedComps) {
-	    var schema = syncedComps[i];
-	    var compKey;
-	    var newCompData;
-
-	    var isRoot = typeof schema === 'string';
-	    if (isRoot) {
-	      var hasComponent = el.components.hasOwnProperty(schema);
-	      if (!hasComponent) {
-	        continue;
-	      }
-	      compKey = schema;
-	      newCompData = el.getAttribute(schema);
-	    } else {
-	      // is child
-	      var selector = schema.selector;
-	      var compName = schema.component;
-	      var propName = schema.property;
-	      var childEl = selector ? el.querySelector(selector) : el;
-	      var hasComp = childEl && childEl.components.hasOwnProperty(compName);
-	      if (!hasComp) {
-	        continue;
-	      }
-	      compKey = NAF.utils.childSchemaToKey(schema);
-	      newCompData = childEl.getAttribute(compName);
-	      if (propName) {
-	        newCompData = newCompData[propName];
-	      }
-	    }
-
-	    var compIsCached = cachedData.hasOwnProperty(compKey);
-	    if (!compIsCached) {
-	      dirtyComps.push(schema);
-	      continue;
-	    }
-
-	    var oldCompData = cachedData[compKey];
-	    if (!deepEqual(oldCompData, newCompData)) {
-	      dirtyComps.push(schema);
-	    }
-	  }
-	  return dirtyComps;
-	};
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\n/* global NAF, io */\n\n/**\n * SocketIO Adapter (socketio)\n * networked-scene: serverURL needs to be ws://localhost:8080 when running locally\n */\nvar SocketioAdapter =\n/*#__PURE__*/\nfunction () {\n  function SocketioAdapter() {\n    _classCallCheck(this, SocketioAdapter);\n\n    if (io === undefined) console.warn('It looks like socket.io has not been loaded before SocketioAdapter. Please do that.');\n    this.app = \"default\";\n    this.room = \"default\";\n    this.occupantListener = null;\n    this.myRoomJoinTime = null;\n    this.myId = null;\n    this.occupants = {}; // id -> joinTimestamp\n\n    this.connectedClients = [];\n    this.serverTimeRequests = 0;\n    this.timeOffsets = [];\n    this.avgTimeOffset = 0;\n  }\n\n  _createClass(SocketioAdapter, [{\n    key: \"setServerUrl\",\n    value: function setServerUrl(wsUrl) {\n      this.wsUrl = wsUrl;\n    }\n  }, {\n    key: \"setApp\",\n    value: function setApp(appName) {\n      this.app = appName;\n    }\n  }, {\n    key: \"setRoom\",\n    value: function setRoom(roomName) {\n      this.room = roomName;\n    }\n  }, {\n    key: \"setWebRtcOptions\",\n    value: function setWebRtcOptions(options) {// No WebRTC support\n    }\n  }, {\n    key: \"setServerConnectListeners\",\n    value: function setServerConnectListeners(successListener, failureListener) {\n      this.connectSuccess = successListener;\n      this.connectFailure = failureListener;\n    }\n  }, {\n    key: \"setRoomOccupantListener\",\n    value: function setRoomOccupantListener(occupantListener) {\n      this.occupantListener = occupantListener;\n    }\n  }, {\n    key: \"setDataChannelListeners\",\n    value: function setDataChannelListeners(openListener, closedListener, messageListener) {\n      this.openListener = openListener;\n      this.closedListener = closedListener;\n      this.messageListener = messageListener;\n    }\n  }, {\n    key: \"connect\",\n    value: function connect() {\n      var self = this;\n      this.updateTimeOffset().then(function () {\n        if (!self.wsUrl || self.wsUrl === \"/\") {\n          if (location.protocol === \"https:\") {\n            self.wsUrl = \"wss://\" + location.host;\n          } else {\n            self.wsUrl = \"ws://\" + location.host;\n          }\n        }\n\n        NAF.log.write(\"Attempting to connect to socket.io\");\n        var socket = self.socket = io(self.wsUrl);\n        socket.on(\"connect\", function () {\n          NAF.log.write(\"User connected\", socket.id);\n          self.myId = socket.id;\n          self.joinRoom();\n        });\n        socket.on(\"connectSuccess\", function (data) {\n          var joinedTime = data.joinedTime;\n          self.myRoomJoinTime = joinedTime;\n          NAF.log.write(\"Successfully joined room\", self.room, \"at server time\", joinedTime);\n          self.connectSuccess(self.myId);\n        });\n        socket.on(\"error\", function (err) {\n          console.error(\"Socket connection failure\", err);\n          self.connectFailure();\n        });\n        socket.on(\"occupantsChanged\", function (data) {\n          var occupants = data.occupants;\n          NAF.log.write('occupants changed', data);\n          self.receivedOccupants(occupants);\n        });\n\n        function receiveData(packet) {\n          var from = packet.from;\n          var type = packet.type;\n          var data = packet.data;\n          self.messageListener(from, type, data);\n        }\n\n        socket.on(\"send\", receiveData);\n        socket.on(\"broadcast\", receiveData);\n      });\n    }\n  }, {\n    key: \"joinRoom\",\n    value: function joinRoom() {\n      NAF.log.write(\"Joining room\", this.room);\n      this.socket.emit(\"joinRoom\", {\n        room: this.room\n      });\n    }\n  }, {\n    key: \"receivedOccupants\",\n    value: function receivedOccupants(occupants) {\n      delete occupants[this.myId];\n      this.occupants = occupants;\n      this.occupantListener(occupants);\n    }\n  }, {\n    key: \"shouldStartConnectionTo\",\n    value: function shouldStartConnectionTo(client) {\n      return true;\n    }\n  }, {\n    key: \"startStreamConnection\",\n    value: function startStreamConnection(remoteId) {\n      this.connectedClients.push(remoteId);\n      this.openListener(remoteId);\n    }\n  }, {\n    key: \"closeStreamConnection\",\n    value: function closeStreamConnection(clientId) {\n      this.connectedClients = this.connectedClients.filter(function (c) {\n        return c != clientId;\n      });\n      this.closedListener(clientId);\n    }\n  }, {\n    key: \"getConnectStatus\",\n    value: function getConnectStatus(clientId) {\n      var connected = this.connectedClients.indexOf(clientId) != -1;\n\n      if (connected) {\n        return NAF.adapters.IS_CONNECTED;\n      } else {\n        return NAF.adapters.NOT_CONNECTED;\n      }\n    }\n  }, {\n    key: \"sendData\",\n    value: function sendData(to, type, data) {\n      this.sendDataGuaranteed(to, type, data);\n    }\n  }, {\n    key: \"sendDataGuaranteed\",\n    value: function sendDataGuaranteed(to, type, data) {\n      var packet = {\n        from: this.myId,\n        to: to,\n        type: type,\n        data: data,\n        sending: true\n      };\n\n      if (this.socket) {\n        this.socket.emit(\"send\", packet);\n      } else {\n        NAF.log.warn('SocketIO socket not created yet');\n      }\n    }\n  }, {\n    key: \"broadcastData\",\n    value: function broadcastData(type, data) {\n      this.broadcastDataGuaranteed(type, data);\n    }\n  }, {\n    key: \"broadcastDataGuaranteed\",\n    value: function broadcastDataGuaranteed(type, data) {\n      var packet = {\n        from: this.myId,\n        type: type,\n        data: data,\n        broadcasting: true\n      };\n\n      if (this.socket) {\n        this.socket.emit(\"broadcast\", packet);\n      } else {\n        NAF.log.warn('SocketIO socket not created yet');\n      }\n    }\n  }, {\n    key: \"getMediaStream\",\n    value: function getMediaStream(clientId) {// Do not support WebRTC\n    }\n  }, {\n    key: \"updateTimeOffset\",\n    value: function updateTimeOffset() {\n      var _this = this;\n\n      var clientSentTime = Date.now() + this.avgTimeOffset;\n      return fetch(document.location.href, {\n        method: \"HEAD\",\n        cache: \"no-cache\"\n      }).then(function (res) {\n        var precision = 1000;\n        var serverReceivedTime = new Date(res.headers.get(\"Date\")).getTime() + precision / 2;\n        var clientReceivedTime = Date.now();\n        var serverTime = serverReceivedTime + (clientReceivedTime - clientSentTime) / 2;\n        var timeOffset = serverTime - clientReceivedTime;\n        _this.serverTimeRequests++;\n\n        if (_this.serverTimeRequests <= 10) {\n          _this.timeOffsets.push(timeOffset);\n        } else {\n          _this.timeOffsets[_this.serverTimeRequests % 10] = timeOffset;\n        }\n\n        _this.avgTimeOffset = _this.timeOffsets.reduce(function (acc, offset) {\n          return acc += offset;\n        }, 0) / _this.timeOffsets.length;\n\n        if (_this.serverTimeRequests > 10) {\n          setTimeout(function () {\n            return _this.updateTimeOffset();\n          }, 5 * 60 * 1000); // Sync clock every 5 minutes.\n        } else {\n          _this.updateTimeOffset();\n        }\n      });\n    }\n  }, {\n    key: \"getServerTime\",\n    value: function getServerTime() {\n      return new Date() + this.avgTimeOffset;\n    }\n  }]);\n\n  return SocketioAdapter;\n}(); // NAF.adapters.register(\"socketio\", SocketioAdapter);\n\n\nmodule.exports = SocketioAdapter;\n\n//# sourceURL=webpack:///./src/adapters/naf-socketio-adapter.js?");
 
 /***/ }),
-/* 19 */
+
+/***/ "./src/adapters/naf-webrtc-adapter.js":
+/*!********************************************!*\
+  !*** ./src/adapters/naf-webrtc-adapter.js ***!
+  \********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-	var pSlice = Array.prototype.slice;
-	var objectKeys = __webpack_require__(20);
-	var isArguments = __webpack_require__(21);
-
-	var deepEqual = module.exports = function (actual, expected, opts) {
-	  if (!opts) opts = {};
-	  // 7.1. All identical values are equivalent, as determined by ===.
-	  if (actual === expected) {
-	    return true;
-	  } else if (actual instanceof Date && expected instanceof Date) {
-	    return actual.getTime() === expected.getTime();
-
-	    // 7.3. Other pairs that do not both pass typeof value == 'object',
-	    // equivalence is determined by ==.
-	  } else if (!actual || !expected || (typeof actual === 'undefined' ? 'undefined' : _typeof(actual)) != 'object' && (typeof expected === 'undefined' ? 'undefined' : _typeof(expected)) != 'object') {
-	    return opts.strict ? actual === expected : actual == expected;
-
-	    // 7.4. For all other Object pairs, including Array objects, equivalence is
-	    // determined by having the same number of owned properties (as verified
-	    // with Object.prototype.hasOwnProperty.call), the same set of keys
-	    // (although not necessarily the same order), equivalent values for every
-	    // corresponding key, and an identical 'prototype' property. Note: this
-	    // accounts for both named and indexed properties on Arrays.
-	  } else {
-	    return objEquiv(actual, expected, opts);
-	  }
-	};
-
-	function isUndefinedOrNull(value) {
-	  return value === null || value === undefined;
-	}
-
-	function isBuffer(x) {
-	  if (!x || (typeof x === 'undefined' ? 'undefined' : _typeof(x)) !== 'object' || typeof x.length !== 'number') return false;
-	  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
-	    return false;
-	  }
-	  if (x.length > 0 && typeof x[0] !== 'number') return false;
-	  return true;
-	}
-
-	function objEquiv(a, b, opts) {
-	  var i, key;
-	  if (isUndefinedOrNull(a) || isUndefinedOrNull(b)) return false;
-	  // an identical 'prototype' property.
-	  if (a.prototype !== b.prototype) return false;
-	  //~~~I've managed to break Object.keys through screwy arguments passing.
-	  //   Converting to array solves the problem.
-	  if (isArguments(a)) {
-	    if (!isArguments(b)) {
-	      return false;
-	    }
-	    a = pSlice.call(a);
-	    b = pSlice.call(b);
-	    return deepEqual(a, b, opts);
-	  }
-	  if (isBuffer(a)) {
-	    if (!isBuffer(b)) {
-	      return false;
-	    }
-	    if (a.length !== b.length) return false;
-	    for (i = 0; i < a.length; i++) {
-	      if (a[i] !== b[i]) return false;
-	    }
-	    return true;
-	  }
-	  try {
-	    var ka = objectKeys(a),
-	        kb = objectKeys(b);
-	  } catch (e) {
-	    //happens when one is a string literal and the other isn't
-	    return false;
-	  }
-	  // having the same number of owned properties (keys incorporates
-	  // hasOwnProperty)
-	  if (ka.length != kb.length) return false;
-	  //the same set of keys (although not necessarily the same order),
-	  ka.sort();
-	  kb.sort();
-	  //~~~cheap key test
-	  for (i = ka.length - 1; i >= 0; i--) {
-	    if (ka[i] != kb[i]) return false;
-	  }
-	  //equivalent values for every corresponding key, and
-	  //~~~possibly expensive deep test
-	  for (i = ka.length - 1; i >= 0; i--) {
-	    key = ka[i];
-	    if (!deepEqual(a[key], b[key], opts)) return false;
-	  }
-	  return (typeof a === 'undefined' ? 'undefined' : _typeof(a)) === (typeof b === 'undefined' ? 'undefined' : _typeof(b));
-	}
+"use strict";
+eval("\n\nfunction _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\"Cannot call a class as a function\"); } }\n\nfunction _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\"value\" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }\n\nfunction _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }\n\n/* global NAF, io */\nvar WebRtcPeer =\n/*#__PURE__*/\nfunction () {\n  function WebRtcPeer(localId, remoteId, sendSignalFunc) {\n    _classCallCheck(this, WebRtcPeer);\n\n    this.localId = localId;\n    this.remoteId = remoteId;\n    this.sendSignalFunc = sendSignalFunc;\n    this.open = false;\n    this.channelLabel = \"networked-aframe-channel\";\n    this.pc = this.createPeerConnection();\n    this.channel = null;\n  }\n\n  _createClass(WebRtcPeer, [{\n    key: \"setDatachannelListeners\",\n    value: function setDatachannelListeners(openListener, closedListener, messageListener, trackListener) {\n      this.openListener = openListener;\n      this.closedListener = closedListener;\n      this.messageListener = messageListener;\n      this.trackListener = trackListener;\n    }\n  }, {\n    key: \"offer\",\n    value: function offer(options) {\n      var self = this; // reliable: false - UDP\n\n      this.setupChannel(this.pc.createDataChannel(this.channelLabel, {\n        reliable: false\n      })); // If there are errors with Safari implement this:\n      // https://github.com/OpenVidu/openvidu/blob/master/openvidu-browser/src/OpenViduInternal/WebRtcPeer/WebRtcPeer.ts#L154\n\n      if (options.sendAudio) {\n        options.localAudioStream.getTracks().forEach(function (track) {\n          return self.pc.addTrack(track, options.localAudioStream);\n        });\n      }\n\n      this.pc.createOffer(function (sdp) {\n        self.handleSessionDescription(sdp);\n      }, function (error) {\n        NAF.log.error(\"WebRtcPeer.offer: \" + error);\n      }, {\n        offerToReceiveAudio: true,\n        offerToReceiveVideo: false\n      });\n    }\n  }, {\n    key: \"handleSignal\",\n    value: function handleSignal(signal) {\n      // ignores signal if it isn't for me\n      if (this.localId !== signal.to || this.remoteId !== signal.from) return;\n\n      switch (signal.type) {\n        case \"offer\":\n          this.handleOffer(signal);\n          break;\n\n        case \"answer\":\n          this.handleAnswer(signal);\n          break;\n\n        case \"candidate\":\n          this.handleCandidate(signal);\n          break;\n\n        default:\n          NAF.log.error(\"WebRtcPeer.handleSignal: Unknown signal type \" + signal.type);\n          break;\n      }\n    }\n  }, {\n    key: \"send\",\n    value: function send(type, data) {\n      if (this.channel === null || this.channel.readyState !== \"open\") {\n        return;\n      }\n\n      this.channel.send(JSON.stringify({\n        type: type,\n        data: data\n      }));\n    }\n  }, {\n    key: \"getStatus\",\n    value: function getStatus() {\n      if (this.channel === null) return WebRtcPeer.NOT_CONNECTED;\n\n      switch (this.channel.readyState) {\n        case \"open\":\n          return WebRtcPeer.IS_CONNECTED;\n\n        case \"connecting\":\n          return WebRtcPeer.CONNECTING;\n\n        case \"closing\":\n        case \"closed\":\n        default:\n          return WebRtcPeer.NOT_CONNECTED;\n      }\n    }\n    /*\n     * Privates\n     */\n\n  }, {\n    key: \"createPeerConnection\",\n    value: function createPeerConnection() {\n      var self = this;\n      var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection || window.msRTCPeerConnection;\n\n      if (RTCPeerConnection === undefined) {\n        throw new Error(\"WebRtcPeer.createPeerConnection: This browser does not seem to support WebRTC.\");\n      }\n\n      var pc = new RTCPeerConnection({\n        iceServers: WebRtcPeer.ICE_SERVERS\n      });\n\n      pc.onicecandidate = function (event) {\n        if (event.candidate) {\n          self.sendSignalFunc({\n            from: self.localId,\n            to: self.remoteId,\n            type: \"candidate\",\n            sdpMLineIndex: event.candidate.sdpMLineIndex,\n            candidate: event.candidate.candidate\n          });\n        }\n      }; // Note: seems like channel.onclose hander is unreliable on some platforms,\n      //       so also tries to detect disconnection here.\n\n\n      pc.oniceconnectionstatechange = function () {\n        if (self.open && pc.iceConnectionState === \"disconnected\") {\n          self.open = false;\n          self.closedListener(self.remoteId);\n        }\n      };\n\n      pc.ontrack = function (e) {\n        self.trackListener(self.remoteId, e.streams[0]);\n      };\n\n      return pc;\n    }\n  }, {\n    key: \"setupChannel\",\n    value: function setupChannel(channel) {\n      var self = this;\n      this.channel = channel; // received data from a remote peer\n\n      this.channel.onmessage = function (event) {\n        var data = JSON.parse(event.data);\n        self.messageListener(self.remoteId, data.type, data.data);\n      }; // connected with a remote peer\n\n\n      this.channel.onopen = function (event) {\n        self.open = true;\n        self.openListener(self.remoteId);\n      }; // disconnected with a remote peer\n\n\n      this.channel.onclose = function (event) {\n        if (!self.open) return;\n        self.open = false;\n        self.closedListener(self.remoteId);\n      }; // error occurred with a remote peer\n\n\n      this.channel.onerror = function (error) {\n        NAF.log.error(\"WebRtcPeer.channel.onerror: \" + error);\n      };\n    }\n  }, {\n    key: \"handleOffer\",\n    value: function handleOffer(message) {\n      var self = this;\n\n      this.pc.ondatachannel = function (event) {\n        self.setupChannel(event.channel);\n      };\n\n      this.setRemoteDescription(message);\n      this.pc.createAnswer(function (sdp) {\n        self.handleSessionDescription(sdp);\n      }, function (error) {\n        NAF.log.error(\"WebRtcPeer.handleOffer: \" + error);\n      });\n    }\n  }, {\n    key: \"handleAnswer\",\n    value: function handleAnswer(message) {\n      this.setRemoteDescription(message);\n    }\n  }, {\n    key: \"handleCandidate\",\n    value: function handleCandidate(message) {\n      var RTCIceCandidate = window.RTCIceCandidate || window.webkitRTCIceCandidate || window.mozRTCIceCandidate;\n      this.pc.addIceCandidate(new RTCIceCandidate(message), function () {}, function (error) {\n        NAF.log.error(\"WebRtcPeer.handleCandidate: \" + error);\n      });\n    }\n  }, {\n    key: \"handleSessionDescription\",\n    value: function handleSessionDescription(sdp) {\n      this.pc.setLocalDescription(sdp, function () {}, function (error) {\n        NAF.log.error(\"WebRtcPeer.handleSessionDescription: \" + error);\n      });\n      this.sendSignalFunc({\n        from: this.localId,\n        to: this.remoteId,\n        type: sdp.type,\n        sdp: sdp.sdp\n      });\n    }\n  }, {\n    key: \"setRemoteDescription\",\n    value: function setRemoteDescription(message) {\n      var RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription || window.msRTCSessionDescription;\n      this.pc.setRemoteDescription(new RTCSessionDescription(message), function () {}, function (error) {\n        NAF.log.error(\"WebRtcPeer.setRemoteDescription: \" + error);\n      });\n    }\n  }, {\n    key: \"close\",\n    value: function close() {\n      if (this.pc) {\n        this.pc.close();\n      }\n    }\n  }]);\n\n  return WebRtcPeer;\n}();\n\nWebRtcPeer.IS_CONNECTED = \"IS_CONNECTED\";\nWebRtcPeer.CONNECTING = \"CONNECTING\";\nWebRtcPeer.NOT_CONNECTED = \"NOT_CONNECTED\";\nWebRtcPeer.ICE_SERVERS = [{\n  urls: \"stun:stun1.l.google.com:19302\"\n}, {\n  urls: \"stun:stun2.l.google.com:19302\"\n}, {\n  urls: \"stun:stun3.l.google.com:19302\"\n}, {\n  urls: \"stun:stun4.l.google.com:19302\"\n}];\n/**\n * Native WebRTC Adapter (native-webrtc)\n * For use with uws-server.js\n * networked-scene: serverURL needs to be ws://localhost:8080 when running locally\n */\n\nvar WebrtcAdapter =\n/*#__PURE__*/\nfunction () {\n  function WebrtcAdapter() {\n    _classCallCheck(this, WebrtcAdapter);\n\n    if (io === undefined) console.warn('It looks like socket.io has not been loaded before WebrtcAdapter. Please do that.');\n    this.app = \"default\";\n    this.room = \"default\";\n    this.occupantListener = null;\n    this.myRoomJoinTime = null;\n    this.myId = null;\n    this.peers = {}; // id -> WebRtcPeer\n\n    this.occupants = {}; // id -> joinTimestamp\n\n    this.audioStreams = {};\n    this.pendingAudioRequest = {};\n    this.serverTimeRequests = 0;\n    this.timeOffsets = [];\n    this.avgTimeOffset = 0;\n  }\n\n  _createClass(WebrtcAdapter, [{\n    key: \"setServerUrl\",\n    value: function setServerUrl(wsUrl) {\n      this.wsUrl = wsUrl;\n    }\n  }, {\n    key: \"setApp\",\n    value: function setApp(appName) {\n      this.app = appName;\n    }\n  }, {\n    key: \"setRoom\",\n    value: function setRoom(roomName) {\n      this.room = roomName;\n    }\n  }, {\n    key: \"setWebRtcOptions\",\n    value: function setWebRtcOptions(options) {\n      if (options.datachannel === false) {\n        NAF.log.error(\"WebrtcAdapter.setWebRtcOptions: datachannel must be true.\");\n      }\n\n      if (options.audio === true) {\n        this.sendAudio = true;\n      }\n\n      if (options.video === true) {\n        NAF.log.warn(\"WebrtcAdapter does not support video yet.\");\n      }\n    }\n  }, {\n    key: \"setServerConnectListeners\",\n    value: function setServerConnectListeners(successListener, failureListener) {\n      this.connectSuccess = successListener;\n      this.connectFailure = failureListener;\n    }\n  }, {\n    key: \"setRoomOccupantListener\",\n    value: function setRoomOccupantListener(occupantListener) {\n      this.occupantListener = occupantListener;\n    }\n  }, {\n    key: \"setDataChannelListeners\",\n    value: function setDataChannelListeners(openListener, closedListener, messageListener) {\n      this.openListener = openListener;\n      this.closedListener = closedListener;\n      this.messageListener = messageListener;\n    }\n  }, {\n    key: \"connect\",\n    value: function connect() {\n      var self = this;\n      this.updateTimeOffset().then(function () {\n        if (!self.wsUrl || self.wsUrl === \"/\") {\n          if (location.protocol === \"https:\") {\n            self.wsUrl = \"wss://\" + location.host;\n          } else {\n            self.wsUrl = \"ws://\" + location.host;\n          }\n        }\n\n        NAF.log.write(\"Attempting to connect to socket.io\");\n        var socket = self.socket = io(self.wsUrl);\n        socket.on(\"connect\", function () {\n          NAF.log.write(\"User connected\", socket.id);\n          self.myId = socket.id;\n          self.joinRoom();\n        });\n        socket.on(\"connectSuccess\", function (data) {\n          var joinedTime = data.joinedTime;\n          self.myRoomJoinTime = joinedTime;\n          NAF.log.write(\"Successfully joined room\", self.room, \"at server time\", joinedTime);\n\n          if (self.sendAudio) {\n            var mediaConstraints = {\n              audio: true,\n              video: false\n            };\n            navigator.mediaDevices.getUserMedia(mediaConstraints).then(function (localStream) {\n              self.storeAudioStream(self.myId, localStream);\n              self.connectSuccess(self.myId);\n            })[\"catch\"](function (e) {\n              return NAF.log.error(e);\n            });\n          } else {\n            self.connectSuccess(self.myId);\n          }\n        });\n        socket.on(\"error\", function (err) {\n          console.error(\"Socket connection failure\", err);\n          self.connectFailure();\n        });\n        socket.on(\"occupantsChanged\", function (data) {\n          var occupants = data.occupants;\n          NAF.log.write('occupants changed', data);\n          self.receivedOccupants(occupants);\n        });\n\n        function receiveData(packet) {\n          var from = packet.from;\n          var type = packet.type;\n          var data = packet.data;\n\n          if (type === 'ice-candidate') {\n            self.peers[from].handleSignal(data);\n            return;\n          }\n\n          self.messageListener(from, type, data);\n        }\n\n        socket.on(\"send\", receiveData);\n        socket.on(\"broadcast\", receiveData);\n      });\n    }\n  }, {\n    key: \"joinRoom\",\n    value: function joinRoom() {\n      NAF.log.write(\"Joining room\", this.room);\n      this.socket.emit(\"joinRoom\", {\n        room: this.room\n      });\n    }\n  }, {\n    key: \"receivedOccupants\",\n    value: function receivedOccupants(occupants) {\n      var _this = this;\n\n      delete occupants[this.myId];\n      this.occupants = occupants;\n      var self = this;\n      var localId = this.myId;\n\n      var _loop = function _loop() {\n        var remoteId = key;\n        if (_this.peers[remoteId]) return \"continue\";\n        var peer = new WebRtcPeer(localId, remoteId, function (data) {\n          self.socket.emit('send', {\n            from: localId,\n            to: remoteId,\n            type: 'ice-candidate',\n            data: data,\n            sending: true\n          });\n        });\n        peer.setDatachannelListeners(self.openListener, self.closedListener, self.messageListener, self.trackListener.bind(self));\n        self.peers[remoteId] = peer;\n      };\n\n      for (var key in occupants) {\n        var _ret = _loop();\n\n        if (_ret === \"continue\") continue;\n      }\n\n      this.occupantListener(occupants);\n    }\n  }, {\n    key: \"shouldStartConnectionTo\",\n    value: function shouldStartConnectionTo(client) {\n      return (this.myRoomJoinTime || 0) <= (client || 0);\n    }\n  }, {\n    key: \"startStreamConnection\",\n    value: function startStreamConnection(remoteId) {\n      var _this2 = this;\n\n      NAF.log.write('starting offer process');\n\n      if (this.sendAudio) {\n        this.getMediaStream(this.myId).then(function (stream) {\n          var options = {\n            sendAudio: true,\n            localAudioStream: stream\n          };\n\n          _this2.peers[remoteId].offer(options);\n        });\n      } else {\n        this.peers[remoteId].offer({});\n      }\n    }\n  }, {\n    key: \"closeStreamConnection\",\n    value: function closeStreamConnection(clientId) {\n      NAF.log.write('closeStreamConnection', clientId, this.peers);\n      this.peers[clientId].close();\n      delete this.peers[clientId];\n      delete this.occupants[clientId];\n      this.closedListener(clientId);\n    }\n  }, {\n    key: \"getConnectStatus\",\n    value: function getConnectStatus(clientId) {\n      var peer = this.peers[clientId];\n      if (peer === undefined) return NAF.adapters.NOT_CONNECTED;\n\n      switch (peer.getStatus()) {\n        case WebRtcPeer.IS_CONNECTED:\n          return NAF.adapters.IS_CONNECTED;\n\n        case WebRtcPeer.CONNECTING:\n          return NAF.adapters.CONNECTING;\n\n        case WebRtcPeer.NOT_CONNECTED:\n        default:\n          return NAF.adapters.NOT_CONNECTED;\n      }\n    }\n  }, {\n    key: \"sendData\",\n    value: function sendData(to, type, data) {\n      this.peers[to].send(type, data);\n    }\n  }, {\n    key: \"sendDataGuaranteed\",\n    value: function sendDataGuaranteed(to, type, data) {\n      var packet = {\n        from: this.myId,\n        to: to,\n        type: type,\n        data: data,\n        sending: true\n      };\n      this.socket.emit(\"send\", packet);\n    }\n  }, {\n    key: \"broadcastData\",\n    value: function broadcastData(type, data) {\n      for (var clientId in this.peers) {\n        this.sendData(clientId, type, data);\n      }\n    }\n  }, {\n    key: \"broadcastDataGuaranteed\",\n    value: function broadcastDataGuaranteed(type, data) {\n      var packet = {\n        from: this.myId,\n        type: type,\n        data: data,\n        broadcasting: true\n      };\n      this.socket.emit(\"broadcast\", packet);\n    }\n  }, {\n    key: \"storeAudioStream\",\n    value: function storeAudioStream(clientId, stream) {\n      this.audioStreams[clientId] = stream;\n\n      if (this.pendingAudioRequest[clientId]) {\n        NAF.log.write(\"Received pending audio for \" + clientId);\n        this.pendingAudioRequest[clientId](stream);\n        delete this.pendingAudioRequest[clientId](stream);\n      }\n    }\n  }, {\n    key: \"trackListener\",\n    value: function trackListener(clientId, stream) {\n      this.storeAudioStream(clientId, stream);\n    }\n  }, {\n    key: \"getMediaStream\",\n    value: function getMediaStream(clientId) {\n      var that = this;\n\n      if (this.audioStreams[clientId]) {\n        NAF.log.write(\"Already had audio for \" + clientId);\n        return Promise.resolve(this.audioStreams[clientId]);\n      } else {\n        NAF.log.write(\"Waiting on audio for \" + clientId);\n        return new Promise(function (resolve) {\n          that.pendingAudioRequest[clientId] = resolve;\n        });\n      }\n    }\n  }, {\n    key: \"updateTimeOffset\",\n    value: function updateTimeOffset() {\n      var _this3 = this;\n\n      var clientSentTime = Date.now() + this.avgTimeOffset;\n      return fetch(document.location.href, {\n        method: \"HEAD\",\n        cache: \"no-cache\"\n      }).then(function (res) {\n        var precision = 1000;\n        var serverReceivedTime = new Date(res.headers.get(\"Date\")).getTime() + precision / 2;\n        var clientReceivedTime = Date.now();\n        var serverTime = serverReceivedTime + (clientReceivedTime - clientSentTime) / 2;\n        var timeOffset = serverTime - clientReceivedTime;\n        _this3.serverTimeRequests++;\n\n        if (_this3.serverTimeRequests <= 10) {\n          _this3.timeOffsets.push(timeOffset);\n        } else {\n          _this3.timeOffsets[_this3.serverTimeRequests % 10] = timeOffset;\n        }\n\n        _this3.avgTimeOffset = _this3.timeOffsets.reduce(function (acc, offset) {\n          return acc += offset;\n        }, 0) / _this3.timeOffsets.length;\n\n        if (_this3.serverTimeRequests > 10) {\n          setTimeout(function () {\n            return _this3.updateTimeOffset();\n          }, 5 * 60 * 1000); // Sync clock every 5 minutes.\n        } else {\n          _this3.updateTimeOffset();\n        }\n      });\n    }\n  }, {\n    key: \"getServerTime\",\n    value: function getServerTime() {\n      return new Date() + this.avgTimeOffset;\n    }\n  }]);\n\n  return WebrtcAdapter;\n}(); // NAF.adapters.register(\"native-webrtc\", WebrtcAdapter);\n\n\nmodule.exports = WebrtcAdapter;\n\n//# sourceURL=webpack:///./src/adapters/naf-webrtc-adapter.js?");
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports) {
 
-	'use strict';
-
-	exports = module.exports = typeof Object.keys === 'function' ? Object.keys : shim;
-
-	exports.shim = shim;
-	function shim(obj) {
-	  var keys = [];
-	  for (var key in obj) {
-	    keys.push(key);
-	  }return keys;
-	}
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-	'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-	var supportsArgumentsClass = function () {
-	  return Object.prototype.toString.call(arguments);
-	}() == '[object Arguments]';
-
-	exports = module.exports = supportsArgumentsClass ? supported : unsupported;
-
-	exports.supported = supported;
-	function supported(object) {
-	  return Object.prototype.toString.call(object) == '[object Arguments]';
-	};
-
-	exports.unsupported = unsupported;
-	function unsupported(object) {
-	  return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) == 'object' && typeof object.length == 'number' && Object.prototype.hasOwnProperty.call(object, 'callee') && !Object.prototype.propertyIsEnumerable.call(object, 'callee') || false;
-	};
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-	"use strict";
-
-	/* global NAF */
-
-	/**
-	  Compressed packet structure:
-	  [
-	    1, // 1 for compressed
-	    networkId,
-	    ownerId,
-	    parent,
-	    {
-	      0: data, // key maps to index of synced components in network component schema
-	      3: data,
-	      4: data
-	    }
-	  ]
-	*/
-	module.exports.compressSyncData = function (syncData, allComponents) {
-	  var compressed = [];
-	  compressed.push(1); // 0
-	  compressed.push(syncData.networkId); // 1
-	  compressed.push(syncData.owner); // 2
-	  compressed.push(syncData.parent); // 3
-	  compressed.push(syncData.template); // 4
-
-	  var compressedComps = this.compressComponents(syncData.components, allComponents);
-	  compressed.push(compressedComps); // 5
-
-	  return compressed;
-	};
-
-	module.exports.compressComponents = function (syncComponents, allComponents) {
-	  var compressed = {};
-	  for (var i = 0; i < allComponents.length; i++) {
-	    var name;
-	    if (typeof allComponents[i] === 'string') {
-	      name = allComponents[i];
-	    } else {
-	      name = NAF.utils.childSchemaToKey(allComponents[i]);
-	    }
-	    if (syncComponents.hasOwnProperty(name)) {
-	      compressed[i] = syncComponents[name];
-	    }
-	  }
-	  return compressed;
-	};
-
-	/**
-	  Decompressed packet structure:
-	  [
-	    0: 0, // 0 for uncompressed
-	    networkId: networkId,
-	    owner: clientId,
-	    parent: parentNetworkId or null,
-	    template: template,
-	    components: {
-	      position: data,
-	      scale: data,
-	      .head---visible: data
-	    },
-	  ]
-	*/
-	module.exports.decompressSyncData = function (compressed, components) {
-	  var entityData = {};
-	  entityData[0] = 0;
-	  entityData.networkId = compressed[1];
-	  entityData.owner = compressed[2];
-	  entityData.parent = compressed[3];
-	  entityData.template = compressed[4];
-
-	  var compressedComps = compressed[5];
-	  components = this.decompressComponents(compressedComps, components);
-	  entityData.components = components;
-
-	  return entityData;
-	};
-
-	module.exports.decompressComponents = function (compressed, components) {
-	  var decompressed = {};
-	  for (var i in compressed) {
-	    var schemaComp = components[i];
-
-	    var name;
-	    if (typeof schemaComp === "string") {
-	      name = schemaComp;
-	    } else {
-	      name = NAF.utils.childSchemaToKey(schemaComp);
-	    }
-	    decompressed[name] = compressed[i];
-	  }
-	  return decompressed;
-	};
-
-/***/ }),
-/* 23 */
+/***/ "./src/components/networked-audio-source.js":
+/*!**************************************************!*\
+  !*** ./src/components/networked-audio-source.js ***!
+  \**************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
+"use strict";
+eval("\n\n/* global AFRAME, NAF, THREE */\nvar naf = __webpack_require__(/*! ../NafIndex */ \"./src/NafIndex.js\");\n\nAFRAME.registerComponent('networked-audio-source', {\n  schema: {\n    positional: {\n      \"default\": true\n    },\n    distanceModel: {\n      \"default\": \"inverse\",\n      oneOf: [\"linear\", \"inverse\", \"exponential\"]\n    },\n    maxDistance: {\n      \"default\": 10000\n    },\n    refDistance: {\n      \"default\": 1\n    },\n    rolloffFactor: {\n      \"default\": 1\n    }\n  },\n  init: function init() {\n    var _this = this;\n\n    this.listener = null;\n    this.stream = null;\n    this._setMediaStream = this._setMediaStream.bind(this);\n    NAF.utils.getNetworkedEntity(this.el).then(function (networkedEl) {\n      var ownerId = networkedEl.components.networked.data.owner;\n\n      if (ownerId) {\n        NAF.connection.adapter.getMediaStream(ownerId).then(_this._setMediaStream)[\"catch\"](function (e) {\n          return naf.log.error(\"Error getting media stream for \".concat(ownerId), e);\n        });\n      } else {// Correctly configured local entity, perhaps do something here for enabling debug audio loopback\n      }\n    });\n  },\n  update: function update() {\n    this._setPannerProperties();\n  },\n  _setMediaStream: function _setMediaStream(newStream) {\n    if (!this.sound) {\n      this.setupSound();\n    }\n\n    if (newStream != this.stream) {\n      if (this.stream) {\n        this.sound.disconnect();\n      }\n\n      if (newStream) {\n        // Chrome seems to require a MediaStream be attached to an AudioElement before AudioNodes work correctly\n        // We don't want to do this in other browsers, particularly in Safari, which actually plays the audio despite\n        // setting the volume to 0.\n        if (/chrome/i.test(navigator.userAgent)) {\n          this.audioEl = new Audio();\n          this.audioEl.setAttribute(\"autoplay\", \"autoplay\");\n          this.audioEl.setAttribute(\"playsinline\", \"playsinline\");\n          this.audioEl.srcObject = newStream;\n          this.audioEl.volume = 0; // we don't actually want to hear audio from this element\n        }\n\n        var soundSource = this.sound.context.createMediaStreamSource(newStream);\n        this.sound.setNodeSource(soundSource);\n        this.el.emit('sound-source-set', {\n          soundSource: soundSource\n        });\n      }\n\n      this.stream = newStream;\n    }\n  },\n  _setPannerProperties: function _setPannerProperties() {\n    if (this.sound && this.data.positional) {\n      this.sound.setDistanceModel(this.data.distanceModel);\n      this.sound.setMaxDistance(this.data.maxDistance);\n      this.sound.setRefDistance(this.data.refDistance);\n      this.sound.setRolloffFactor(this.data.rolloffFactor);\n    }\n  },\n  remove: function remove() {\n    if (!this.sound) return;\n    this.el.removeObject3D(this.attrName);\n\n    if (this.stream) {\n      this.sound.disconnect();\n    }\n  },\n  setupSound: function setupSound() {\n    var el = this.el;\n    var sceneEl = el.sceneEl;\n\n    if (this.sound) {\n      el.removeObject3D(this.attrName);\n    }\n\n    if (!sceneEl.audioListener) {\n      sceneEl.audioListener = new THREE.AudioListener();\n      sceneEl.camera && sceneEl.camera.add(sceneEl.audioListener);\n      sceneEl.addEventListener('camera-set-active', function (evt) {\n        evt.detail.cameraEl.getObject3D('camera').add(sceneEl.audioListener);\n      });\n    }\n\n    this.listener = sceneEl.audioListener;\n    this.sound = this.data.positional ? new THREE.PositionalAudio(this.listener) : new THREE.Audio(this.listener);\n    el.setObject3D(this.attrName, this.sound);\n\n    this._setPannerProperties();\n  }\n});\n\n//# sourceURL=webpack:///./src/components/networked-audio-source.js?");
 
-	/* global AFRAME, NAF, THREE */
-	var naf = __webpack_require__(3);
+/***/ }),
 
-	AFRAME.registerComponent('networked-audio-source', {
-	  schema: {
-	    positional: { default: true },
-	    distanceModel: {
-	      default: "inverse",
-	      oneOf: ["linear", "inverse", "exponential"]
-	    },
-	    maxDistance: { default: 10000 },
-	    refDistance: { default: 1 },
-	    rolloffFactor: { default: 1 }
-	  },
+/***/ "./src/components/networked-scene.js":
+/*!*******************************************!*\
+  !*** ./src/components/networked-scene.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-	  init: function init() {
-	    var _this = this;
+"use strict";
+eval("\n\n/* global AFRAME, NAF */\nAFRAME.registerComponent('networked-scene', {\n  schema: {\n    serverURL: {\n      \"default\": '/'\n    },\n    app: {\n      \"default\": 'default'\n    },\n    room: {\n      \"default\": 'default'\n    },\n    connectOnLoad: {\n      \"default\": true\n    },\n    onConnect: {\n      \"default\": 'onConnect'\n    },\n    adapter: {\n      \"default\": 'socketio'\n    },\n    // See https://github.com/networked-aframe/networked-aframe#adapters for list of adapters\n    audio: {\n      \"default\": false\n    },\n    // Only if adapter supports audio\n    debug: {\n      \"default\": false\n    }\n  },\n  init: function init() {\n    var el = this.el;\n    this.connect = this.connect.bind(this);\n    el.addEventListener('connect', this.connect);\n\n    if (this.data.connectOnLoad) {\n      el.emit('connect', null, false);\n    }\n  },\n\n  /**\n   * Connect to signalling server and begin connecting to other clients\n   */\n  connect: function connect() {\n    NAF.log.setDebug(this.data.debug);\n    NAF.log.write('Networked-Aframe Connecting...');\n    this.checkDeprecatedProperties();\n    this.setupNetworkAdapter();\n\n    if (this.hasOnConnectFunction()) {\n      this.callOnConnect();\n    }\n\n    return NAF.connection.connect(this.data.serverURL, this.data.app, this.data.room, this.data.audio);\n  },\n  checkDeprecatedProperties: function checkDeprecatedProperties() {// No current\n  },\n  setupNetworkAdapter: function setupNetworkAdapter() {\n    var adapterName = this.data.adapter;\n    var adapter = NAF.adapters.make(adapterName);\n    NAF.connection.setNetworkAdapter(adapter);\n    this.el.emit('adapter-ready', adapter, false);\n  },\n  hasOnConnectFunction: function hasOnConnectFunction() {\n    return this.data.onConnect != '' && window[this.data.onConnect];\n  },\n  callOnConnect: function callOnConnect() {\n    NAF.connection.onConnect(window[this.data.onConnect]);\n  },\n  remove: function remove() {\n    NAF.log.write('networked-scene disconnected');\n    this.el.removeEventListener('connect', this.connect);\n    NAF.connection.disconnect();\n  }\n});\n\n//# sourceURL=webpack:///./src/components/networked-scene.js?");
 
-	    this.listener = null;
-	    this.stream = null;
+/***/ }),
 
-	    this._setMediaStream = this._setMediaStream.bind(this);
+/***/ "./src/components/networked.js":
+/*!*************************************!*\
+  !*** ./src/components/networked.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-	    NAF.utils.getNetworkedEntity(this.el).then(function (networkedEl) {
-	      var ownerId = networkedEl.components.networked.data.owner;
+"use strict";
+eval("\n\n/* global AFRAME, NAF, THREE */\nvar deepEqual = __webpack_require__(/*! ../DeepEquals */ \"./src/DeepEquals.js\");\n\nvar InterpolationBuffer = __webpack_require__(/*! buffered-interpolation */ \"./node_modules/buffered-interpolation/dist/buffered-interpolation.js\");\n\nvar DEG2RAD = THREE.Math.DEG2RAD;\nvar OBJECT3D_COMPONENTS = ['position', 'rotation', 'scale'];\n\nfunction defaultRequiresUpdate() {\n  var cachedData = null;\n  return function (newData) {\n    if (cachedData === null || !deepEqual(cachedData, newData)) {\n      cachedData = AFRAME.utils.clone(newData);\n      return true;\n    }\n\n    return false;\n  };\n}\n\nAFRAME.registerSystem(\"networked\", {\n  init: function init() {\n    this.components = [];\n    this.nextSyncTime = 0;\n  },\n  register: function register(component) {\n    this.components.push(component);\n  },\n  deregister: function deregister(component) {\n    var idx = this.components.indexOf(component);\n\n    if (idx > -1) {\n      this.components.splice(idx, 1);\n    }\n  },\n  tick: function () {\n    return function () {\n      if (!NAF.connection.adapter) return;\n      if (this.el.clock.elapsedTime < this.nextSyncTime) return;\n      var data = {\n        d: []\n      };\n\n      for (var i = 0, l = this.components.length; i < l; i++) {\n        var c = this.components[i];\n        if (!c.isMine()) continue;\n\n        if (!c.el.parentElement) {\n          NAF.log.error(\"entity registered with system despite being removed\"); //TODO: Find out why tick is still being called\n\n          return;\n        }\n\n        var syncData = this.components[i].syncDirty();\n        if (!syncData) continue;\n        data.d.push(syncData);\n      }\n\n      if (data.d.length > 0) {\n        NAF.connection.broadcastData('um', data);\n      }\n\n      this.updateNextSyncTime();\n    };\n  }(),\n  updateNextSyncTime: function updateNextSyncTime() {\n    this.nextSyncTime = this.el.clock.elapsedTime + 1 / NAF.options.updateRate;\n  }\n});\nAFRAME.registerComponent('networked', {\n  schema: {\n    template: {\n      \"default\": ''\n    },\n    attachTemplateToLocal: {\n      \"default\": true\n    },\n    persistent: {\n      \"default\": false\n    },\n    networkId: {\n      \"default\": ''\n    },\n    owner: {\n      \"default\": ''\n    },\n    creator: {\n      \"default\": ''\n    }\n  },\n  init: function init() {\n    this.OWNERSHIP_GAINED = 'ownership-gained';\n    this.OWNERSHIP_CHANGED = 'ownership-changed';\n    this.OWNERSHIP_LOST = 'ownership-lost';\n    this.onOwnershipGainedEvent = {\n      el: this.el\n    };\n    this.onOwnershipChangedEvent = {\n      el: this.el\n    };\n    this.onOwnershipLostEvent = {\n      el: this.el\n    };\n    this.conversionEuler = new THREE.Euler();\n    this.conversionEuler.order = \"YXZ\";\n    this.bufferInfos = [];\n    this.bufferPosition = new THREE.Vector3();\n    this.bufferQuaternion = new THREE.Quaternion();\n    this.bufferScale = new THREE.Vector3();\n    var wasCreatedByNetwork = this.wasCreatedByNetwork();\n    this.onConnected = this.onConnected.bind(this);\n    this.syncData = {};\n    this.componentSchemas = NAF.schemas.getComponents(this.data.template);\n    this.cachedElements = new Array(this.componentSchemas.length);\n    this.networkUpdatePredicates = this.componentSchemas.map(function (x) {\n      return x.requiresNetworkUpdate && x.requiresNetworkUpdate() || defaultRequiresUpdate();\n    }); // Fill cachedElements array with null elements\n\n    this.invalidateCachedElements();\n    this.initNetworkParent();\n\n    if (this.data.networkId === '') {\n      this.el.setAttribute(this.name, {\n        networkId: NAF.utils.createNetworkId()\n      });\n    }\n\n    if (wasCreatedByNetwork) {\n      this.firstUpdate();\n    } else {\n      if (this.data.attachTemplateToLocal) {\n        this.attachTemplateToLocal();\n      }\n\n      this.registerEntity(this.data.networkId);\n    }\n\n    this.lastOwnerTime = -1;\n\n    if (NAF.clientId) {\n      this.onConnected();\n    } else {\n      document.body.addEventListener('connected', this.onConnected, false);\n    }\n\n    document.body.dispatchEvent(this.entityCreatedEvent());\n    this.el.dispatchEvent(new CustomEvent('instantiated', {\n      detail: {\n        el: this.el\n      }\n    }));\n    this.el.sceneEl.systems.networked.register(this);\n  },\n  attachTemplateToLocal: function attachTemplateToLocal() {\n    var template = NAF.schemas.getCachedTemplate(this.data.template);\n    var elAttrs = template.attributes; // Merge root element attributes with this entity\n\n    for (var attrIdx = 0; attrIdx < elAttrs.length; attrIdx++) {\n      this.el.setAttribute(elAttrs[attrIdx].name, elAttrs[attrIdx].value);\n    } // Append all child elements\n\n\n    while (template.firstElementChild) {\n      this.el.appendChild(template.firstElementChild);\n    }\n  },\n  takeOwnership: function takeOwnership() {\n    var owner = this.data.owner;\n    var lastOwnerTime = this.lastOwnerTime;\n    var now = NAF.connection.getServerTime();\n\n    if (owner && !this.isMine() && lastOwnerTime < now) {\n      this.lastOwnerTime = now;\n      this.removeLerp();\n      this.el.setAttribute('networked', {\n        owner: NAF.clientId\n      });\n      this.syncAll();\n      this.onOwnershipGainedEvent.oldOwner = owner;\n      this.el.emit(this.OWNERSHIP_GAINED, this.onOwnershipGainedEvent);\n      this.onOwnershipChangedEvent.oldOwner = owner;\n      this.onOwnershipChangedEvent.newOwner = NAF.clientId;\n      this.el.emit(this.OWNERSHIP_CHANGED, this.onOwnershipChangedEvent);\n      return true;\n    }\n\n    return false;\n  },\n  wasCreatedByNetwork: function wasCreatedByNetwork() {\n    return !!this.el.firstUpdateData;\n  },\n  initNetworkParent: function initNetworkParent() {\n    var parentEl = this.el.parentElement;\n\n    if (parentEl['components'] && parentEl.components['networked']) {\n      this.parent = parentEl;\n    } else {\n      this.parent = null;\n    }\n  },\n  registerEntity: function registerEntity(networkId) {\n    NAF.entities.registerEntity(networkId, this.el);\n  },\n  applyPersistentFirstSync: function applyPersistentFirstSync() {\n    var networkId = this.data.networkId;\n    var persistentFirstSync = NAF.entities.getPersistentFirstSync(networkId);\n\n    if (persistentFirstSync) {\n      this.networkUpdate(persistentFirstSync);\n      NAF.entities.forgetPersistentFirstSync(networkId);\n    }\n  },\n  firstUpdate: function firstUpdate() {\n    var entityData = this.el.firstUpdateData;\n    this.networkUpdate(entityData);\n  },\n  onConnected: function onConnected() {\n    var _this = this;\n\n    if (this.data.owner === '') {\n      this.lastOwnerTime = NAF.connection.getServerTime();\n      this.el.setAttribute(this.name, {\n        owner: NAF.clientId,\n        creator: NAF.clientId\n      });\n      setTimeout(function () {\n        //a-primitives attach their components on the next frame; wait for components to be attached before calling syncAll\n        if (!_this.el.parentNode) {\n          NAF.log.warn(\"Networked element was removed before ever getting the chance to syncAll\");\n          return;\n        }\n\n        _this.syncAll(undefined, true);\n      }, 0);\n    }\n\n    document.body.removeEventListener('connected', this.onConnected, false);\n  },\n  isMine: function isMine() {\n    return this.data.owner === NAF.clientId;\n  },\n  createdByMe: function createdByMe() {\n    return this.data.creator === NAF.clientId;\n  },\n  tick: function tick(time, dt) {\n    if (!this.isMine() && NAF.options.useLerp) {\n      for (var i = 0; i < this.bufferInfos.length; i++) {\n        var bufferInfo = this.bufferInfos[i];\n        var buffer = bufferInfo.buffer;\n        var object3D = bufferInfo.object3D;\n        var componentNames = bufferInfo.componentNames;\n        buffer.update(dt);\n\n        if (componentNames.includes('position')) {\n          object3D.position.copy(buffer.getPosition());\n        }\n\n        if (componentNames.includes('rotation')) {\n          object3D.quaternion.copy(buffer.getQuaternion());\n        }\n\n        if (componentNames.includes('scale')) {\n          object3D.scale.copy(buffer.getScale());\n        }\n      }\n    }\n  },\n\n  /* Sending updates */\n  syncAll: function syncAll(targetClientId, isFirstSync) {\n    if (!this.canSync()) {\n      return;\n    }\n\n    var components = this.gatherComponentsData(true);\n    var syncData = this.createSyncData(components, isFirstSync);\n\n    if (targetClientId) {\n      NAF.connection.sendDataGuaranteed(targetClientId, 'u', syncData);\n    } else {\n      NAF.connection.broadcastDataGuaranteed('u', syncData);\n    }\n  },\n  syncDirty: function syncDirty() {\n    if (!this.canSync()) {\n      return;\n    }\n\n    var components = this.gatherComponentsData(false);\n\n    if (components === null) {\n      return;\n    }\n\n    return this.createSyncData(components);\n  },\n  getCachedElement: function getCachedElement(componentSchemaIndex) {\n    var cachedElement = this.cachedElements[componentSchemaIndex];\n\n    if (cachedElement) {\n      return cachedElement;\n    }\n\n    var componentSchema = this.componentSchemas[componentSchemaIndex];\n\n    if (componentSchema.selector) {\n      return this.cachedElements[componentSchemaIndex] = this.el.querySelector(componentSchema.selector);\n    } else {\n      return this.cachedElements[componentSchemaIndex] = this.el;\n    }\n  },\n  invalidateCachedElements: function invalidateCachedElements() {\n    for (var i = 0; i < this.cachedElements.length; i++) {\n      this.cachedElements[i] = null;\n    }\n  },\n  gatherComponentsData: function gatherComponentsData(fullSync) {\n    var componentsData = null;\n\n    for (var i = 0; i < this.componentSchemas.length; i++) {\n      var componentSchema = this.componentSchemas[i];\n      var componentElement = this.getCachedElement(i);\n\n      if (!componentElement) {\n        if (fullSync) {\n          componentsData = componentsData || {};\n          componentsData[i] = null;\n        }\n\n        continue;\n      }\n\n      var componentName = componentSchema.component ? componentSchema.component : componentSchema;\n      var componentData = componentElement.getAttribute(componentName);\n\n      if (componentData === null) {\n        if (fullSync) {\n          componentsData = componentsData || {};\n          componentsData[i] = null;\n        }\n\n        continue;\n      }\n\n      var syncedComponentData = componentSchema.property ? componentData[componentSchema.property] : componentData; // Use networkUpdatePredicate to check if the component needs to be updated.\n      // Call networkUpdatePredicate first so that it can update any cached values in the event of a fullSync.\n\n      if (this.networkUpdatePredicates[i](syncedComponentData) || fullSync) {\n        componentsData = componentsData || {};\n        componentsData[i] = syncedComponentData;\n      }\n    }\n\n    return componentsData;\n  },\n  createSyncData: function createSyncData(components, isFirstSync) {\n    var syncData = this.syncData,\n        data = this.data;\n    syncData.networkId = data.networkId;\n    syncData.owner = data.owner;\n    syncData.creator = data.creator;\n    syncData.lastOwnerTime = this.lastOwnerTime;\n    syncData.template = data.template;\n    syncData.persistent = data.persistent;\n    syncData.parent = this.getParentId();\n    syncData.components = components;\n    syncData.isFirstSync = !!isFirstSync;\n    return syncData;\n  },\n  canSync: function canSync() {\n    // This client will send a sync if:\n    //\n    // - The client is the owner\n    // - The client is the creator, and the owner is not in the room.\n    //\n    // The reason for the latter case is so the object will still be\n    // properly instantiated if the owner leaves. (Since the object lifetime\n    // is tied to the creator.)\n    if (this.data.owner && this.isMine()) return true;\n    if (!this.createdByMe()) return false;\n    var clients = NAF.connection.getConnectedClients();\n\n    for (var clientId in clients) {\n      if (clientId === this.data.owner) return false;\n    }\n\n    return true;\n  },\n  getParentId: function getParentId() {\n    this.initNetworkParent(); // TODO fix calling this each network tick\n\n    if (!this.parent) {\n      return null;\n    }\n\n    var netComp = this.parent.getAttribute('networked');\n    return netComp.networkId;\n  },\n\n  /* Receiving updates */\n  networkUpdate: function networkUpdate(entityData) {\n    // Avoid updating components if the entity data received did not come from the current owner.\n    if (entityData.lastOwnerTime < this.lastOwnerTime || this.lastOwnerTime === entityData.lastOwnerTime && this.data.owner > entityData.owner) {\n      return;\n    }\n\n    if (this.data.owner !== entityData.owner) {\n      var wasMine = this.isMine();\n      this.lastOwnerTime = entityData.lastOwnerTime;\n      var oldOwner = this.data.owner;\n      var newOwner = entityData.owner;\n      this.el.setAttribute('networked', {\n        owner: entityData.owner\n      });\n\n      if (wasMine) {\n        this.onOwnershipLostEvent.newOwner = newOwner;\n        this.el.emit(this.OWNERSHIP_LOST, this.onOwnershipLostEvent);\n      }\n\n      this.onOwnershipChangedEvent.oldOwner = oldOwner;\n      this.onOwnershipChangedEvent.newOwner = newOwner;\n      this.el.emit(this.OWNERSHIP_CHANGED, this.onOwnershipChangedEvent);\n    }\n\n    if (this.data.persistent !== entityData.persistent) {\n      this.el.setAttribute('networked', {\n        persistent: entityData.persistent\n      });\n    }\n\n    this.updateNetworkedComponents(entityData.components);\n  },\n  updateNetworkedComponents: function updateNetworkedComponents(components) {\n    for (var componentIndex = 0, l = this.componentSchemas.length; componentIndex < l; componentIndex++) {\n      var componentData = components[componentIndex];\n      var componentSchema = this.componentSchemas[componentIndex];\n      var componentElement = this.getCachedElement(componentIndex);\n\n      if (componentElement === null || componentData === null || componentData === undefined) {\n        continue;\n      }\n\n      if (componentSchema.component) {\n        if (componentSchema.property) {\n          this.updateNetworkedComponent(componentElement, componentSchema.component, componentSchema.property, componentData);\n        } else {\n          this.updateNetworkedComponent(componentElement, componentSchema.component, componentData);\n        }\n      } else {\n        this.updateNetworkedComponent(componentElement, componentSchema, componentData);\n      }\n    }\n  },\n  updateNetworkedComponent: function updateNetworkedComponent(el, componentName, data, value) {\n    if (!NAF.options.useLerp || !OBJECT3D_COMPONENTS.includes(componentName)) {\n      if (value === undefined) {\n        el.setAttribute(componentName, data);\n      } else {\n        el.setAttribute(componentName, data, value);\n      }\n\n      return;\n    }\n\n    var bufferInfo;\n\n    for (var i = 0, l = this.bufferInfos.length; i < l; i++) {\n      var info = this.bufferInfos[i];\n\n      if (info.object3D === el.object3D) {\n        bufferInfo = info;\n        break;\n      }\n    }\n\n    if (!bufferInfo) {\n      bufferInfo = {\n        buffer: new InterpolationBuffer(InterpolationBuffer.MODE_LERP, 0.1),\n        object3D: el.object3D,\n        componentNames: [componentName]\n      };\n      this.bufferInfos.push(bufferInfo);\n    } else {\n      var componentNames = bufferInfo.componentNames;\n\n      if (!componentNames.includes(componentName)) {\n        componentNames.push(componentName);\n      }\n    }\n\n    var buffer = bufferInfo.buffer;\n\n    switch (componentName) {\n      case 'position':\n        buffer.setPosition(this.bufferPosition.set(data.x, data.y, data.z));\n        return;\n\n      case 'rotation':\n        this.conversionEuler.set(DEG2RAD * data.x, DEG2RAD * data.y, DEG2RAD * data.z);\n        buffer.setQuaternion(this.bufferQuaternion.setFromEuler(this.conversionEuler));\n        return;\n\n      case 'scale':\n        buffer.setScale(this.bufferScale.set(data.x, data.y, data.z));\n        return;\n    }\n\n    NAF.log.error('Could not set value in interpolation buffer.', el, componentName, data, bufferInfo);\n  },\n  removeLerp: function removeLerp() {\n    this.bufferInfos = [];\n  },\n  remove: function remove() {\n    if (this.isMine() && NAF.connection.isConnected()) {\n      var syncData = {\n        networkId: this.data.networkId\n      };\n\n      if (NAF.entities.hasEntity(this.data.networkId)) {\n        NAF.connection.broadcastDataGuaranteed('r', syncData);\n      } else {\n        NAF.log.error(\"Removing networked entity that is not in entities array.\");\n      }\n    }\n\n    NAF.entities.forgetEntity(this.data.networkId);\n    document.body.dispatchEvent(this.entityRemovedEvent(this.data.networkId));\n    this.el.sceneEl.systems.networked.deregister(this);\n  },\n  entityCreatedEvent: function entityCreatedEvent() {\n    return new CustomEvent('entityCreated', {\n      detail: {\n        el: this.el\n      }\n    });\n  },\n  entityRemovedEvent: function entityRemovedEvent(networkId) {\n    return new CustomEvent('entityRemoved', {\n      detail: {\n        networkId: networkId\n      }\n    });\n  }\n});\n\n//# sourceURL=webpack:///./src/components/networked.js?");
 
-	      if (ownerId) {
-	        NAF.connection.adapter.getMediaStream(ownerId).then(_this._setMediaStream).catch(function (e) {
-	          return naf.log.error('Error getting media stream for ' + ownerId, e);
-	        });
-	      } else {
-	        // Correctly configured local entity, perhaps do something here for enabling debug audio loopback
-	      }
-	    });
-	  },
+/***/ }),
 
-	  update: function update() {
-	    this._setPannerProperties();
-	  },
-	  _setMediaStream: function _setMediaStream(newStream) {
-	    if (!this.sound) {
-	      this.setupSound();
-	    }
+/***/ "./src/index.js":
+/*!**********************!*\
+  !*** ./src/index.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-	    if (newStream != this.stream) {
-	      if (this.stream) {
-	        this.sound.disconnect();
-	      }
-	      if (newStream) {
-	        // Chrome seems to require a MediaStream be attached to an AudioElement before AudioNodes work correctly
-	        // We don't want to do this in other browsers, particularly in Safari, which actually plays the audio despite
-	        // setting the volume to 0.
-	        if (/chrome/i.test(navigator.userAgent)) {
-	          this.audioEl = new Audio();
-	          this.audioEl.setAttribute("autoplay", "autoplay");
-	          this.audioEl.setAttribute("playsinline", "playsinline");
-	          this.audioEl.srcObject = newStream;
-	          this.audioEl.volume = 0; // we don't actually want to hear audio from this element
-	        }
+"use strict";
+eval("\n\n// Global vars and functions\n__webpack_require__(/*! ./NafIndex.js */ \"./src/NafIndex.js\"); // Network components\n\n\n__webpack_require__(/*! ./components/networked-scene */ \"./src/components/networked-scene.js\");\n\n__webpack_require__(/*! ./components/networked */ \"./src/components/networked.js\");\n\n__webpack_require__(/*! ./components/networked-audio-source */ \"./src/components/networked-audio-source.js\");\n\n//# sourceURL=webpack:///./src/index.js?");
 
-	        var soundSource = this.sound.context.createMediaStreamSource(newStream);
-	        this.sound.setNodeSource(soundSource);
-	        this.el.emit('sound-source-set', { soundSource: soundSource });
-	      }
-	      this.stream = newStream;
-	    }
-	  },
-	  _setPannerProperties: function _setPannerProperties() {
-	    if (this.sound && this.data.positional) {
-	      this.sound.setDistanceModel(this.data.distanceModel);
-	      this.sound.setMaxDistance(this.data.maxDistance);
-	      this.sound.setRefDistance(this.data.refDistance);
-	      this.sound.setRolloffFactor(this.data.rolloffFactor);
-	    }
-	  },
+/***/ }),
 
+/***/ "./src/options.js":
+/*!************************!*\
+  !*** ./src/options.js ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-	  remove: function remove() {
-	    if (!this.sound) return;
+"use strict";
+eval("\n\nvar options = {\n  debug: false,\n  updateRate: 15,\n  // How often network components call `sync`\n  useLerp: true,\n  // lerp position, rotation, and scale components on networked entities.\n  firstSyncSource: null,\n  // If specified, only allow first syncs from this source.\n  syncSource: null // If specified, only allow syncs from this source.\n\n};\nmodule.exports = options;\n\n//# sourceURL=webpack:///./src/options.js?");
 
-	    this.el.removeObject3D(this.attrName);
-	    if (this.stream) {
-	      this.sound.disconnect();
-	    }
-	  },
+/***/ }),
 
-	  setupSound: function setupSound() {
-	    var el = this.el;
-	    var sceneEl = el.sceneEl;
+/***/ "./src/utils.js":
+/*!**********************!*\
+  !*** ./src/utils.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
 
-	    if (this.sound) {
-	      el.removeObject3D(this.attrName);
-	    }
-
-	    if (!sceneEl.audioListener) {
-	      sceneEl.audioListener = new THREE.AudioListener();
-	      sceneEl.camera && sceneEl.camera.add(sceneEl.audioListener);
-	      sceneEl.addEventListener('camera-set-active', function (evt) {
-	        evt.detail.cameraEl.getObject3D('camera').add(sceneEl.audioListener);
-	      });
-	    }
-	    this.listener = sceneEl.audioListener;
-
-	    this.sound = this.data.positional ? new THREE.PositionalAudio(this.listener) : new THREE.Audio(this.listener);
-	    el.setObject3D(this.attrName, this.sound);
-	    this._setPannerProperties();
-	  }
-	});
+"use strict";
+eval("\n\n/* global NAF */\nmodule.exports.whenEntityLoaded = function (entity, callback) {\n  if (entity.hasLoaded) {\n    callback();\n  }\n\n  entity.addEventListener('loaded', function () {\n    callback();\n  });\n};\n\nmodule.exports.createHtmlNodeFromString = function (str) {\n  var div = document.createElement('div');\n  div.innerHTML = str;\n  var child = div.firstChild;\n  return child;\n};\n\nmodule.exports.getCreator = function (el) {\n  var components = el.components;\n\n  if (components['networked']) {\n    return components['networked'].data.creator;\n  }\n\n  return null;\n};\n\nmodule.exports.getNetworkOwner = function (el) {\n  var components = el.components;\n\n  if (components['networked']) {\n    return components['networked'].data.owner;\n  }\n\n  return null;\n};\n\nmodule.exports.getNetworkId = function (el) {\n  var components = el.components;\n\n  if (components['networked']) {\n    return components['networked'].data.networkId;\n  }\n\n  return null;\n};\n\nmodule.exports.now = function () {\n  return Date.now();\n};\n\nmodule.exports.createNetworkId = function () {\n  return Math.random().toString(36).substring(2, 9);\n};\n/**\n * Find the closest ancestor (including the passed in entity) that has a `networked` component\n * @param {ANode} entity - Entity to begin the search on\n * @returns {Promise<ANode>} An promise that resolves to an entity with a `networked` component\n */\n\n\nfunction getNetworkedEntity(entity) {\n  return new Promise(function (resolve, reject) {\n    var curEntity = entity;\n\n    while (curEntity && curEntity.components && !curEntity.components.networked) {\n      curEntity = curEntity.parentNode;\n    }\n\n    if (!curEntity || !curEntity.components || !curEntity.components.networked) {\n      return reject(\"Entity does not have and is not a child of an entity with the [networked] component \");\n    }\n\n    if (curEntity.hasLoaded) {\n      resolve(curEntity);\n    } else {\n      curEntity.addEventListener(\"instantiated\", function () {\n        resolve(curEntity);\n      }, {\n        once: true\n      });\n    }\n  });\n}\n\nmodule.exports.getNetworkedEntity = getNetworkedEntity;\n\nmodule.exports.takeOwnership = function (entity) {\n  var curEntity = entity;\n\n  while (curEntity && curEntity.components && !curEntity.components.networked) {\n    curEntity = curEntity.parentNode;\n  }\n\n  if (!curEntity || !curEntity.components || !curEntity.components.networked) {\n    throw new Error(\"Entity does not have and is not a child of an entity with the [networked] component \");\n  }\n\n  return curEntity.components.networked.takeOwnership();\n};\n\nmodule.exports.isMine = function (entity) {\n  var curEntity = entity;\n\n  while (curEntity && curEntity.components && !curEntity.components.networked) {\n    curEntity = curEntity.parentNode;\n  }\n\n  if (!curEntity || !curEntity.components || !curEntity.components.networked) {\n    throw new Error(\"Entity does not have and is not a child of an entity with the [networked] component \");\n  }\n\n  return curEntity.components.networked.data.owner === NAF.clientId;\n};\n\nmodule.exports.almostEqualVec3 = function (u, v, epsilon) {\n  return Math.abs(u.x - v.x) < epsilon && Math.abs(u.y - v.y) < epsilon && Math.abs(u.z - v.z) < epsilon;\n};\n\n//# sourceURL=webpack:///./src/utils.js?");
 
 /***/ })
-/******/ ]);
+
+/******/ });

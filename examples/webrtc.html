@@ -4,7 +4,8 @@
     <title>Dev Example — Networked-Aframe</title>
     <meta name="description" content="Dev Example — Networked-Aframe">
 
-    <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
     <script src="/build.js"></script>
     <script>window.NAF || document.write('<script src="https://unpkg.com/networked-aframe/dist/networked-aframe.min.js">\x3C/script>')</script>
 
@@ -13,12 +14,10 @@
     <script src="/js/spawn-in-circle.component.js"></script>
   </head>
   <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
-    <script src="/easyrtc/easyrtc.js"></script>
     <a-scene networked-scene="
       room: dev;
       debug: true;
-      adapter: wseasyrtc;
+      adapter: webrtc;
     ">
       <a-assets>
 
@@ -31,6 +30,7 @@
         <template id="avatar-template">
           <a-entity class="avatar">
             <a-sphere class="head"
+              color="#ffffff"
               scale="0.45 0.5 0.4"
             ></a-sphere>
             <a-entity class="face"
@@ -65,12 +65,18 @@
         <!-- /Templates -->
       </a-assets>
 
-      <a-entity id="player" networked="template:#avatar-template;attachTemplateToLocal:false;" camera="userHeight: 1.6" spawn-in-circle="radius:3" wasd-controls look-controls>
-          <a-sphere class="head"
-            random-color
-            visible="false"
-          ></a-sphere>
-      </a-entity>
+      <a-entity id="player"
+      networked="template:#avatar-template;attachTemplateToLocal:false;"
+      camera
+      position="0 1.6 0"
+      spawn-in-circle="radius:3"
+      wasd-controls look-controls
+      >
+      <a-sphere class="head"
+        visible="false"
+        random-color
+      ></a-sphere>
+    </a-entity>
 
       <a-entity position="0 0 0"
         geometry="primitive: plane; width: 10000; height: 10000;" rotation="-90 0 0"
@@ -119,28 +125,7 @@
 
       // Called by Networked-Aframe when connected to server
       function onConnect () {
-        console.error('On connected to NAF -', new Date());
-
-        // Examples of listening to NAF events
-        document.body.addEventListener('connected', function (evt) {
-          console.error('connected event. clientId =', evt.detail.clientId);
-        });
-
-        document.body.addEventListener('clientConnected', function (evt) {
-          console.error('clientConnected event. clientId =', evt.detail.clientId);
-        });
-
-        document.body.addEventListener('clientDisconnected', function (evt) {
-          console.error('clientDisconnected event. clientId =', evt.detail.clientId);
-        });
-
-        document.body.addEventListener('entityCreated', function (evt) {
-          console.error('entityCreated event', evt.detail.el);
-        });
-
-        document.body.addEventListener('entityRemoved', function(evt) {
-          console.error('entityRemoved event. Entity networkId =', evt.detail.networkId);
-        });
+        console.log("onConnect", new Date());
       }
     </script>
   </body>
